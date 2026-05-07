@@ -1,306 +1,234 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>REZA ALL WEB</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    
+    <title>Byreza.id — Premium Digital Hub</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Plus+Jakarta+Sans:wght@700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary-color: #6c5ce7;
-            --secondary-color: #a29bfe;
-            --dark-bg: #0f0c29;
-            --glass-bg: rgba(255, 255, 255, 0.1);
-            --text-color: #ffffff;
+            --accent: #00ff88;
+            --bg: #050505;
         }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Poppins', sans-serif;
-        }
-
         body {
-            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
-            color: var(--text-color);
-            min-height: 100vh;
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--bg);
+            color: #fff;
             overflow-x: hidden;
         }
 
-        /* --- Header --- */
-        header {
-            text-align: center;
-            padding: 50px 20px;
-            animation: fadeInDown 1s ease;
-        }
-
-        header h1 {
-            font-size: 3rem;
-            letter-spacing: 5px;
-            text-transform: uppercase;
-            background: linear-gradient(to right, #fff, var(--secondary-color));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-shadow: 0 10px 20px rgba(0,0,0,0.3);
-        }
-
-        /* --- Sidebar Menu --- */
-        .menu-btn {
+        /* Glassmorphism Background */
+        .glow-bg {
             position: fixed;
-            top: 25px;
-            left: 25px;
-            font-size: 24px;
-            cursor: pointer;
-            z-index: 1000;
-            transition: 0.3s;
-            color: white;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(0, 255, 136, 0.15) 0%, transparent 70%);
+            z-index: -1;
+            filter: blur(80px);
+            animation: move 20s infinite alternate;
+        }
+        @keyframes move {
+            from { transform: translate(-20%, -20%); }
+            to { transform: translate(40%, 40%); }
         }
 
-        .sidebar {
-            position: fixed;
-            top: 0;
-            left: -300px;
-            width: 280px;
-            height: 100%;
-            background: rgba(15, 12, 41, 0.95);
-            backdrop-filter: blur(10px);
-            transition: 0.5s cubic-bezier(0.77,0.2,0.05,1.0);
-            z-index: 999;
-            padding: 80px 20px;
-            box-shadow: 5px 0 15px rgba(0,0,0,0.5);
+        .nav-blur {
+            backdrop-filter: blur(20px);
+            background: rgba(10, 10, 10, 0.8);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
         }
 
-        .sidebar.active {
-            left: 0;
+        .menu-dropdown {
+            transform-origin: top left;
+            transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+            opacity: 0;
+            transform: scale(0.9) translateY(-10px);
+            pointer-events: none;
+        }
+        .menu-dropdown.active {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+            pointer-events: auto;
         }
 
-        .side-btn {
+        /* Grid Cards */
+        .premium-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
             display: flex;
-            align-items: center;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .premium-card:hover {
+            background: rgba(255, 255, 255, 0.06);
+            border-color: var(--accent);
+            transform: translateY(-12px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+        }
+
+        /* Futuristic Buttons */
+        .btn-action {
+            position: relative;
+            background: #fff;
+            color: #000;
+            font-weight: 800;
+            padding: 14px 28px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-size: 12px;
+            clip-path: polygon(10% 0, 100% 0, 90% 100%, 0% 100%);
+            transition: all 0.3s ease;
             width: 100%;
-            padding: 15px;
-            margin-bottom: 20px;
-            border: none;
-            border-radius: 12px;
-            background: var(--glass-bg);
-            color: white;
-            cursor: pointer;
-            transition: 0.3s;
-            text-decoration: none;
-            font-weight: 500;
-        }
-
-        .side-btn i {
-            margin-right: 15px;
-            font-size: 20px;
-        }
-
-        .side-btn:hover {
-            background: var(--primary-color);
-            transform: translateX(10px);
-        }
-
-        /* --- Grid Table Section --- */
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
-        .grid-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 25px;
             margin-top: 20px;
         }
-
-        .card {
-            background: var(--glass-bg);
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 20px;
-            padding: 25px;
-            text-align: center;
-            backdrop-filter: blur(5px);
-            transition: 0.4s;
-            animation: fadeInUp 1s ease forwards;
-            opacity: 0;
+        .btn-action:hover {
+            background: var(--accent);
+            transform: skewX(-5deg) scale(1.02);
+            box-shadow: 0 0 25px rgba(0, 255, 136, 0.5);
         }
 
-        .card:hover {
-            transform: translateY(-10px);
-            background: rgba(255, 255, 255, 0.15);
-            border-color: var(--secondary-color);
-            box-shadow: 0 15px 30px rgba(0,0,0,0.4);
+        /* Notification */
+        #notif {
+            bottom: -100px;
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
+        #notif.show { bottom: 24px; }
 
-        .card h3 {
-            margin-bottom: 15px;
-            color: var(--secondary-color);
-            font-size: 1.4rem;
+        .logo-reza {
+            animation: float 3s ease-in-out infinite;
+            background: linear-gradient(135deg, #fff 0%, #ddd 100%);
         }
-
-        .card p {
-            font-size: 0.9rem;
-            margin-bottom: 20px;
-            color: #ddd;
-            line-height: 1.6;
-        }
-
-        .visit-btn {
-            display: inline-block;
-            padding: 10px 25px;
-            background: var(--primary-color);
-            color: white;
-            text-decoration: none;
-            border-radius: 50px;
-            font-weight: 600;
-            transition: 0.3s;
-            box-shadow: 0 4px 15px rgba(108, 92, 231, 0.4);
-        }
-
-        .visit-btn:hover {
-            background: white;
-            color: var(--primary-color);
-            transform: scale(1.05);
-        }
-
-        /* --- Animations --- */
-        @keyframes fadeInDown {
-            from { opacity: 0; transform: translateY(-30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* Delay for grid cards */
-        .card:nth-child(1) { animation-delay: 0.2s; }
-        .card:nth-child(2) { animation-delay: 0.4s; }
-        .card:nth-child(3) { animation-delay: 0.6s; }
-        .card:nth-child(4) { animation-delay: 0.8s; }
-        .card:nth-child(5) { animation-delay: 1.0s; }
-
-        /* SweetAlert Custom Style (Simulation) */
-        .custom-alert {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) scale(0);
-            background: white;
-            color: #333;
-            padding: 30px;
-            border-radius: 20px;
-            z-index: 2000;
-            text-align: center;
-            transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-        }
-        .custom-alert.active { transform: translate(-50%, -50%) scale(1); }
-        .overlay {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.7);
-            display: none;
-            z-index: 1999;
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0); }
+            50% { transform: translateY(-8px) rotate(8deg); }
         }
     </style>
 </head>
 <body>
 
-    <div class="menu-btn" onclick="toggleSidebar()">
-        <i class="fas fa-bars"></i>
-    </div>
+    <div class="glow-bg"></div>
 
-    <div class="sidebar" id="sidebar">
-        <a href="https://wa.me/6283116920766" class="side-btn" target="_blank">
-            <i class="fab fa-whatsapp"></i>
-            Hubungi Saya
-        </a>
-        <button class="side-btn" onclick="showAlert()">
-            <i class="fas fa-exclamation-triangle"></i>
-            Peringatan Pengguna
-        </button>
-    </div>
+    <!-- Header Navigation -->
+    <nav class="fixed top-0 w-full z-50 nav-blur px-6 py-4 flex justify-between items-center">
+        <!-- Left: Menu Button -->
+        <div class="relative">
+            <button id="menuBtn" class="p-2 hover:bg-white/10 rounded-full transition-all">
+                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"/></svg>
+            </button>
+            <div id="dropdown" class="menu-dropdown absolute left-0 mt-4 w-56 p-2 rounded-2xl bg-[#0a0a0a] border border-white/10 shadow-2xl">
+                <a href="https://wa.me/6283116920767" class="flex items-center gap-3 p-3 hover:bg-white/5 rounded-xl transition-all">
+                    <div class="p-2 bg-green-500/20 text-green-500 rounded-lg">WhatsApp</div>
+                    <span class="text-xs font-bold">CONTACT</span>
+                </a>
+                <button onclick="showPrivacy()" class="w-full flex items-center gap-3 p-3 hover:bg-white/5 rounded-xl transition-all text-left">
+                    <div class="p-2 bg-blue-500/20 text-blue-500 rounded-lg">Privacy</div>
+                    <span class="text-xs font-bold">SECURITY</span>
+                </button>
+            </div>
+        </div>
 
-    <header>
-        <h1>RezatoolsAi</h1>
-    </header>
+        <!-- Middle: Brand -->
+        <h1 class="text-2xl font-black tracking-tighter italic font-['Plus_Jakarta_Sans']">BYREZA<span class="text-[var(--accent)]">.ID</span></h1>
 
-    <div class="container">
-        <div class="grid-container">
-            <div class="card">
-                <h3>REZTOOLSAI (AWAL)</h3>
-                <p>GUNAKAN AI VERSI BUATAN REZA 100% NO INTERNET.</p>
-                <a href="https://reza-website-tools-ai.vercel.app/" class="visit-btn">Kunjungi</a>
+        <!-- Right: Logo -->
+        <div class="logo-reza w-10 h-10 rounded-xl flex items-center justify-center shadow-lg cursor-pointer">
+            <span class="text-black font-black text-xl">R</span>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="pt-40 px-6 max-w-6xl mx-auto">
+        
+        <header class="text-center mb-20">
+            <h2 class="text-5xl md:text-7xl font-bold mb-6 tracking-tight">HAI WELCOME <span class="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-400">Digital.</span></h2>
+            <p class="text-gray-400 max-w-xl mx-auto text-sm md:text-lg">NEW UPDATE REZA ALL WEB .</p>
+        </header>
+
+        <!-- 2 Grid Section -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-10 mb-32">
+            
+            <!-- Grid 1 (Brat Generator / Project A) -->
+            <div class="premium-card rounded-[40px] p-10">
+                <div>
+                    <div class="flex justify-between items-start mb-8">
+                        <span class="px-4 py-1 bg-white/5 border border-white/10 rounded-full text-[10px] font-bold tracking-widest text-emerald-400">UTAMA</span>
+                        <span class="text-[10px] text-gray-500 font-bold">VER 2.4</span>
+                    </div>
+                    <h3 class="text-3xl font-black mb-4 italic">BRAT GENERATOR</h3>
+                    <p class="text-gray-400 text-sm leading-relaxed mb-8">
+                        Buat teks bergaya Brat aesthetic dengan satu klik. Dioptimalkan untuk kecepatan dan hasil resolusi tinggi secara instan.
+                    </p>
+                    <div class="border-t border-white/5 pt-6 mb-4">
+                        <table class="w-full text-[11px] font-bold">
+                            <tr class="text-gray-500"><td>ENGINE</td><td>SPEED</td></tr>
+                            <tr class="text-white"><td>V8 CANVAS</td><td>0.2s</td></tr>
+                        </table>
+                    </div>
+                </div>
+                <!-- TOMBOL GRID 1 -->
+                <button onclick="location.href='#'" class="btn-action">GASKEUN</button>
             </div>
-            <div class="card">
-                <h3>SOUNDMEME</h3>
-                <p>Gudangnya suara random yang bikin suasana pecah. Scroll, klik, ketawa!.</p>
-                <a href="https://search-sound.vercel.app/" class="visit-btn">Kunjungi</a>
+
+            <!-- Grid 2 (Digital Assets / Project B) -->
+            <div class="premium-card rounded-[40px] p-10 border-emerald-500/20">
+                <div>
+                    <div class="flex justify-between items-start mb-8">
+                        <span class="px-4 py-1 bg-emerald-500/10 rounded-full text-[10px] font-bold tracking-widest text-[var(--accent)]">UTAMA</span>
+                        <span class="text-[10px] text-gray-500 font-bold">PRO</span>
+                    </div>
+                    <h3 class="text-3xl font-black mb-4 italic">SEARCH PINTEREST</h3>
+                    <p class="text-gray-400 text-sm leading-relaxed mb-8">
+                        SEARCH FOTO FOTO PINTEREST TANPA LANGSUNG MENGUNAKAN APLIKASI ASLINYA .
+                    </p>
+                    <div class="bg-white/5 p-4 rounded-2xl">
+                        <p class="text-[10px] text-emerald-400 font-black tracking-widest mb-1">RESULT SEARCH</p>
+                        <p class="text-2xl font-bold">20 SEARCH RESULT</p>
+                    </div>
+                </div>
+                <!-- TOMBOL GRID 2 -->
+                <button onclick="location.href='#'" class="btn-action">GASKEUN</button>
             </div>
-            <div class="card">
-                <h3>LIRIK LAGU</h3>
-                <p>CARI LIRIK LAGU FAVORIT TANPA INTERNET DAN RESPON API LANCAR.</p>
-                <a href="https://search-lirik-lagu.vercel.app/" class="visit-btn">Kunjungi</a>
-            </div>
-            <div class="card">
-                <h3>SEARCH HENTAI</h3>
-                <p>Jangan lupa kunci pintu! Selamat menikmati hasil pencarian terbaik untukmu.</p>
-                <a href="https://search-negatif.vercel.app/" class="visit-btn">Kunjungi</a>
-            </div>
-            <div class="card">
-                <h3>NCS MUSIC</h3>
-                <p>Musik gratis, energi tanpa batas. Temukan soundtrack sempurna untuk petualangan digitalmu di sini.</p>
-                <a href="https://search-ncs-music.vercel.app/" class="visit-btn">Kunjungi</a>
-            </div>
+
+        </div>
+    </main>
+
+    <!-- Notification -->
+    <div id="notif" class="fixed left-1/2 -translate-x-1/2 w-[90%] max-w-sm backdrop-blur-2xl bg-black/60 border border-white/10 p-5 rounded-3xl flex items-center gap-4 z-[100] shadow-[0_20px_50px_rgba(0,0,0,0.5)]">
+        <div class="w-12 h-12 bg-emerald-500/20 text-emerald-500 rounded-2xl flex items-center justify-center shrink-0">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+        </div>
+        <div>
+            <p class="text-xs font-bold uppercase tracking-widest text-emerald-400">Safety Verified</p>
+            <p id="notifText" class="text-[11px] text-gray-300 leading-snug"></p>
         </div>
     </div>
 
-    <div class="overlay" id="overlay" onclick="closeAlert()"></div>
-    <div class="custom-alert" id="myAlert">
-        <h2 style="margin-bottom: 15px; color: #d63031;">Peringatan Keamanan!</h2>
-        <p>Halo Pengguna! Pastikan Anda menjelajahi website ini dengan bijak. Seluruh konten di sini dilindungi hak cipta. Jangan lupa bahagia dan teruslah berkarya!</p>
-        <button onclick="closeAlert()" style="margin-top: 20px; padding: 10px 20px; border: none; border-radius: 5px; background: #6c5ce7; color: white; cursor: pointer;">Saya Mengerti</button>
-    </div>
-
     <script>
-        function toggleSidebar() {
-            const sidebar = document.getElementById('sidebar');
-            sidebar.classList.toggle('active');
-            
-            // Ubah icon bars jadi times (X)
-            const icon = document.querySelector('.menu-btn i');
-            if(sidebar.classList.contains('active')) {
-                icon.classList.replace('fa-bars', 'fa-times');
-            } else {
-                icon.classList.replace('fa-times', 'fa-bars');
-            }
-        }
+        const menuBtn = document.getElementById('menuBtn');
+        const dropdown = document.getElementById('dropdown');
+        const notif = document.getElementById('notif');
+        const notifText = document.getElementById('notifText');
 
-        function showAlert() {
-            document.getElementById('overlay').style.display = 'block';
-            document.getElementById('myAlert').classList.add('active');
-        }
-
-        function closeAlert() {
-            document.getElementById('overlay').style.display = 'none';
-            document.getElementById('myAlert').classList.remove('active');
-        }
-
-        // Close sidebar when clicking outside (optional)
-        document.addEventListener('click', function(event) {
-            const sidebar = document.getElementById('sidebar');
-            const menuBtn = document.querySelector('.menu-btn');
-            if (!sidebar.contains(event.target) && !menuBtn.contains(event.target)) {
-                sidebar.classList.remove('active');
-                document.querySelector('.menu-btn i').classList.replace('fa-times', 'fa-bars');
-            }
+        menuBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            dropdown.classList.toggle('active');
         });
+
+        window.addEventListener('click', () => {
+            dropdown.classList.remove('active');
+        });
+
+        function showPrivacy() {
+            notifText.innerText = "Privasi Anda prioritas kami. Data dienkripsi secara end-to-end dan tidak akan pernah disimpan tanpa izin Anda.";
+            notif.classList.add('show');
+            setTimeout(() => {
+                notif.classList.remove('show');
+            }, 4000);
+        }
     </script>
 </body>
 </html>
