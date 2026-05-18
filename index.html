@@ -232,16 +232,22 @@
             border: 1px solid rgba(99, 102, 241, 0.2);
         }
 
-        .tool-num.badge-soon {
-            color: #ef4444;
-            background: rgba(239, 68, 68, 0.1);
-            border: 1px solid rgba(239, 68, 68, 0.2);
+        /* Gaya untuk badge KTP, menggunakan warna yang sama dengan No. 01-04 */
+        .tool-num.badge-ktp {
+            color: var(--accent-color);
+            background: rgba(99, 102, 241, 0.1);
+            border: 1px solid rgba(99, 102, 241, 0.2);
         }
 
         .tool-icon {
             font-size: 1.8rem;
             color: var(--text-main);
             transition: transform 0.3s ease;
+        }
+
+        /* Gaya khusus untuk ikon KTP agar sedikit lebih besar dan pas */
+        .tool-icon.fa-id-card {
+             font-size: 2rem;
         }
 
         .tool-card:hover .tool-icon {
@@ -478,16 +484,21 @@
                 </div>
             </div>
 
-            <!-- Grid 5 -->
+            <!-- Grid 5 (DIUBAH MENJADI NEO-KTP GENERATOR) -->
             <div class="tool-card">
                 <div class="card-header">
-                    <span class="tool-num badge-soon">COMING SOON</span>
-                    <i class="fa-solid fa-lock tool-icon"></i>
+                    <!-- Menggunakan badge-ktp dengan warna Indigo Neon -->
+                    <span class="tool-num badge-ktp">NO. 05</span>
+                    <!-- Mengubah ikon menjadi fa-id-card (KTP) -->
+                    <i class="fa-solid fa-id-card tool-icon"></i>
                 </div>
                 <div class="card-body">
-                    <h3 class="tool-name">BELUM DI KETAHUI</h3>
-                    <p class="tool-desc">Fitur misterius sedang dalam tahap pengembangan intensif oleh tim developer RezFullWeb. Nantikan kejutan rilis modul premium berikutnya segera!</p>
-                    <a href="https://notifikasi-pandavgk.vercel.app/" target="_blank" class="redirect-btn">
+                    <!-- Judul Diubah -->
+                    <h3 class="tool-name">NEO-KTP GENERATOR</h3>
+                    <!-- Deskripsi Diubah -->
+                    <p class="tool-desc">Buat replika gambar KTP (Kartu Tanda Penduduk) Indonesia dengan desain modern dan gaya futuristik secara instan. Lengkap dengan opsi kustomisasi data untuk keperluan hiburan, edukasi, atau <i>roleplay</i>.</p>
+                    <!-- Link Tujuan Diubah (asumsi link notifikasi sebelumnya) -->
+                    <a href="https://e-ktp-generated.vercel.app/" target="_blank" class="redirect-btn">
                         Buka Tools <i class="fa-solid fa-arrow-right"></i>
                     </a>
                 </div>
@@ -551,4 +562,4 @@
         });
     </script>
 </body>
-</html>
+    </html>
