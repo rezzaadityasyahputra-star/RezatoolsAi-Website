@@ -1,565 +1,235 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RezFullWeb - All Tools Premium</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
     <style>
-        :root {
-            --bg-dark: #090a0f;
-            --card-bg: rgba(17, 19, 28, 0.7);
-            --accent-color: #6366f1; /* Indigo Neon */
-            --accent-glow: rgba(99, 102, 241, 0.35);
-            --text-main: #f3f4f6;
-            --text-muted: #9ca3af;
-        }
+        :root { --bg: #090a0f; --card: rgba(17,19,28,0.7); --accent: #6366f1; --text: #f3f4f6; --muted: #9ca3af; }
+        * { margin:0; padding:0; box-sizing:border-box; font-family:'Plus Jakarta Sans',sans-serif; }
+        body { background: radial-gradient(circle at top right, #131525 0%, #090a0f 60%); color:var(--text); min-height:100vh; overflow-x:hidden; }
+        
+        /* HEADER + LIVE TIME CONTAINER */
+        header { width:100%; padding:20px 5%; display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(255,255,255,0.05); backdrop-filter:blur(10px); position:sticky; top:0; z-index:100; }
+        .logo { font-size:1.4rem; font-weight:700; background:linear-gradient(to right, #fff, var(--accent)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+        
+        /* STATUS CHIPS */
+        .header-timer { display:flex; align-items:center; gap:10px; padding:6px 16px; border-radius:30px; font-weight:600; font-family:monospace; font-size:0.88rem; transition: 0.3s; }
+        .status-open { background:rgba(34,197,94,0.08); border:1px solid rgba(34,197,94,0.25); color:#4ade80; }
+        .status-close { background:rgba(239,68,68,0.08); border:1px solid rgba(239,68,68,0.25); color:#f87171; animation:pulse 2s infinite; }
+        .countdown-text { opacity:0.8; font-size:0.8rem; border-left:1px solid rgba(255,255,255,0.2); padding-left:8px; margin-left:2px; }
+        
+        /* DROPDOWN & MENU */
+        .menu-wrapper { position:relative; }
+        .three-dots-btn { background:transparent; border:none; color:var(--text); font-size:1.2rem; cursor:pointer; width:35px; height:35px; border-radius:50%; display:flex; align-items:center; justify-content:center; }
+        .dropdown-menu { position:absolute; top:45px; right:0; background:#11131c; border:1px solid rgba(255,255,255,0.08); border-radius:12px; padding:8px; width:220px; opacity:0; visibility:hidden; transform:translateY(-10px); transition:0.3s; box-shadow:-5px 5px 20px rgba(0,0,0,0.5); }
+        .dropdown-menu.show { opacity:1; visibility:visible; transform:translateY(0); }
+        .dropdown-item { width:100%; padding:10px; background:transparent; border:none; color:var(--text); font-size:0.9rem; text-align:left; cursor:pointer; display:flex; align-items:center; gap:10px; text-decoration:none; }
+        .dropdown-item.wa-btn { color:#22c55e; } .dropdown-item.policy-btn { color:#38bdf8; }
+        
+        /* CONTEN CODES */
+        .container { max-width:1200px; margin:40px auto; padding:0 20px; }
+        .hero-section { text-align:center; margin-bottom:40px; }
+        .tools-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:20px; transition: 0.4s ease; }
+        .tool-card { background:var(--card); border:1px solid rgba(255,255,255,0.03); border-radius:20px; padding:25px; display:flex; flex-direction:column; justify-content:space-between; transition:0.3s; backdrop-filter:blur(12px); }
+        .tool-card:hover { transform:translateY(-5px); border-color:var(--accent); box-shadow:0 10px 25px rgba(99,102,241,0.25); }
+        .card-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; }
+        .tool-num { font-size:0.8rem; font-weight:700; color:var(--accent); background:rgba(99,102,241,0.1); padding:3px 10px; border-radius:20px; }
+        .tool-name { font-size:1.15rem; font-weight:600; margin-bottom:8px; color:#fff; }
+        .tool-desc { font-size:0.88rem; color:var(--muted); line-height:1.5; margin-bottom:20px; }
+        .redirect-btn { width:100%; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); padding:12px; border-radius:10px; color:#fff; font-weight:600; text-decoration:none; display:flex; align-items:center; justify-content:center; gap:8px; transition:0.2s; }
+        .tool-card:hover .redirect-btn { background:linear-gradient(135deg, var(--accent), #4f46e5); border-color:transparent; }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Plus Jakarta Sans', sans-serif;
-        }
+        /* NOTIFIKASI POP-UP OVERLAY (ANIMASI DAN TRANSISI SMOOTH) */
+        .notif-overlay { position:fixed; inset:0; background:rgba(5,6,10,0); backdrop-filter:blur(0px); display:flex; align-items:center; justify-content:center; z-index:9999; visibility:hidden; transition: background 0.5s ease, backdrop-filter 0.5s ease, visibility 0.5s; }
+        .notif-overlay.show { visibility:visible; background:rgba(5,6,10,0.85); backdrop-filter:blur(8px); }
+        
+        .notif-box { background:#11131c; border:2px solid #ef4444; width:90%; max-width:420px; border-radius:24px; padding:35px 30px; text-align:center; box-shadow:0 0 30px rgba(239,68,68,0.2); transform:translateY(50px) scale(0.9); opacity:0; transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.5s; }
+        .notif-overlay.show .notif-box { transform:translateY(0) scale(1); opacity:1; }
+        
+        .notif-box i { font-size:3.5rem; color:#ef4444; margin-bottom:15px; animation:float 2.5s infinite ease-in-out; }
+        .notif-box h2 { font-size:1.5rem; margin-bottom:10px; color:#fff; }
+        .notif-box p { color:var(--muted); font-size:0.92rem; line-height:1.5; margin-bottom:25px; }
+        .notif-btn { width:100%; background:#ef4444; color:#fff; border:none; padding:12px; border-radius:12px; font-weight:700; cursor:pointer; box-shadow:0 4px 10px rgba(239,68,68,0.3); transition:0.2s; }
+        .notif-btn:hover { background:#dc2626; }
 
-        body {
-            background-color: var(--bg-dark);
-            color: var(--text-main);
-            min-height: 100vh;
-            overflow-x: hidden;
-            background: radial-gradient(circle at top right, #131525 0%, #090a0f 60%);
-        }
+        /* MODAL KEBIJAKAN */
+        .modal-overlay { position:fixed; inset:0; background:rgba(5,6,10,0.8); backdrop-filter:blur(5px); display:flex; align-items:center; justify-content:center; z-index:150; opacity:0; visibility:hidden; transition:0.3s; }
+        .modal-overlay.open { opacity:1; visibility:visible; }
+        .modal-box { background:#11131c; border:1px solid rgba(255,255,255,0.1); width:90%; max-width:450px; border-radius:20px; padding:25px; }
 
-        /* Navbar */
-        header {
-            width: 100%;
-            padding: 20px 5%;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(10px);
-            position: relative;
-            z-index: 10;
-        }
-
-        .logo {
-            font-size: 1.5rem;
-            font-weight: 700;
-            letter-spacing: 0.5px;
-            background: linear-gradient(to right, #fff, var(--accent-color));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        /* Titik Tiga Menu & Animasi Dropdown Bergerak ke Kanan */
-        .menu-wrapper {
-            position: relative;
-        }
-
-        .three-dots-btn {
-            background: transparent;
-            border: none;
-            color: var(--text-main);
-            font-size: 1.3rem;
-            cursor: pointer;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s ease;
-        }
-
-        .three-dots-btn:hover {
-            background: rgba(255, 255, 255, 0.05);
-            color: var(--accent-color);
-        }
-
-        .dropdown-menu {
-            position: absolute;
-            top: 50px;
-            right: 0;
-            background: #11131c;
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 16px;
-            padding: 10px;
-            width: 240px;
-            box-shadow: -10px 10px 30px rgba(0, 0, 0, 0.5);
-            
-            /* State Awal Hidup */
-            opacity: 0;
-            visibility: hidden;
-            transform: translateX(-20px); 
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-
-        /* Kelas Aktif Dropdown */
-        .dropdown-menu.show {
-            opacity: 1;
-            visibility: visible;
-            transform: translateX(0); 
-        }
-
-        .dropdown-item {
-            width: 100%;
-            padding: 12px 16px;
-            background: transparent;
-            border: none;
-            color: var(--text-main);
-            font-size: 0.95rem;
-            font-weight: 500;
-            text-align: left;
-            cursor: pointer;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            text-decoration: none;
-            transition: all 0.2s ease;
-            margin-bottom: 4px;
-        }
-
-        .dropdown-item:last-child {
-            margin-bottom: 0;
-        }
-
-        .dropdown-item i {
-            font-size: 1.1rem;
-            transition: transform 0.2s ease;
-        }
-
-        .dropdown-item.wa-btn {
-            color: #22c55e;
-        }
-        .dropdown-item.wa-btn:hover {
-            background: rgba(34, 197, 94, 0.1);
-            transform: translateX(4px);
-        }
-
-        .dropdown-item.policy-btn {
-            color: #38bdf8;
-        }
-        .dropdown-item.policy-btn:hover {
-            background: rgba(56, 189, 248, 0.1);
-            transform: translateX(4px);
-        }
-
-        /* Main Container */
-        .container {
-            max-width: 1200px;
-            margin: 60px auto;
-            padding: 0 20px;
-        }
-
-        .hero-section {
-            text-align: center;
-            margin-bottom: 50px;
-        }
-
-        .hero-section h2 {
-            font-size: 2.2rem;
-            margin-bottom: 10px;
-            font-weight: 700;
-            letter-spacing: 1px;
-        }
-
-        .hero-section p {
-            color: var(--text-muted);
-            font-size: 1rem;
-        }
-
-        /* 5 Grid Workspace Layout */
-        .tools-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 25px;
-        }
-
-        /* Card Efek & Desain */
-        .tool-card {
-            background: var(--card-bg);
-            border: 1px solid rgba(255, 255, 255, 0.03);
-            border-radius: 24px;
-            padding: 30px;
-            position: relative;
-            overflow: hidden;
-            backdrop-filter: blur(12px);
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-        }
-
-        .tool-card::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(135deg, transparent, rgba(99, 102, 241, 0.05));
-            opacity: 0;
-            transition: opacity 0.4s ease;
-        }
-
-        .tool-card:hover {
-            transform: translateY(-8px);
-            border-color: rgba(99, 102, 241, 0.3);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 20px var(--accent-glow);
-        }
-
-        .tool-card:hover::before {
-            opacity: 1;
-        }
-
-        .card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            position: relative;
-            z-index: 2;
-        }
-
-        .tool-num {
-            font-size: 0.85rem;
-            font-weight: 700;
-            color: var(--accent-color);
-            background: rgba(99, 102, 241, 0.1);
-            padding: 4px 12px;
-            border-radius: 30px;
-            border: 1px solid rgba(99, 102, 241, 0.2);
-        }
-
-        /* Gaya untuk badge KTP, menggunakan warna yang sama dengan No. 01-04 */
-        .tool-num.badge-ktp {
-            color: var(--accent-color);
-            background: rgba(99, 102, 241, 0.1);
-            border: 1px solid rgba(99, 102, 241, 0.2);
-        }
-
-        .tool-icon {
-            font-size: 1.8rem;
-            color: var(--text-main);
-            transition: transform 0.3s ease;
-        }
-
-        /* Gaya khusus untuk ikon KTP agar sedikit lebih besar dan pas */
-        .tool-icon.fa-id-card {
-             font-size: 2rem;
-        }
-
-        .tool-card:hover .tool-icon {
-            transform: scale(1.1) rotate(5deg);
-            color: var(--accent-color);
-        }
-
-        .card-body {
-            position: relative;
-            z-index: 2;
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-            justify-content: space-between;
-        }
-
-        .tool-name {
-            font-size: 1.3rem;
-            font-weight: 600;
-            margin-bottom: 12px;
-            color: #fff;
-        }
-
-        .tool-desc {
-            font-size: 0.92rem;
-            color: var(--text-muted);
-            line-height: 1.6;
-            margin-bottom: 25px;
-            flex-grow: 1;
-        }
-
-        /* Tombol Menggunakan Tag Anchor '<a>' */
-        .redirect-btn {
-            width: 100%;
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            padding: 14px;
-            border-radius: 14px;
-            color: #fff;
-            font-weight: 600;
-            font-size: 0.9rem;
-            text-decoration: none; 
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-            position: relative;
-            z-index: 2;
-            cursor: pointer;
-        }
-
-        /* Animasi saat Kartu di-hover, Tombol Menyala */
-        .tool-card:hover .redirect-btn {
-            background: linear-gradient(135deg, var(--accent-color), #4f46e5);
-            border-color: transparent;
-            box-shadow: 0 4px 15px var(--accent-glow);
-        }
-
-        /* EFED ANIMASI KLIK (Active State) */
-        .redirect-btn:active {
-            transform: scale(0.95);
-            background: #4f46e5;
-            box-shadow: 0 2px 8px rgba(99, 102, 241, 0.5);
-            transition: transform 0.1s ease;
-        }
-
-        .redirect-btn i {
-            transition: transform 0.2s ease;
-        }
-        .redirect-btn:hover i {
-            transform: translateX(4px);
-        }
-
-        /* Modal Notifikasi Kebijakan (Pop-Up) */
-        .modal-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(5, 6, 10, 0.8);
-            backdrop-filter: blur(8px);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 100;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s ease;
-        }
-
-        .modal-overlay.open {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        .modal-box {
-            background: #11131c;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            width: 90%;
-            max-width: 500px;
-            border-radius: 24px;
-            padding: 30px;
-            transform: scale(0.9);
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.175);
-            box-shadow: 0 25px 50px rgba(0,0,0,0.6);
-        }
-
-        .modal-overlay.open .modal-box {
-            transform: scale(1);
-        }
-
-        .modal-title {
-            font-size: 1.4rem;
-            font-weight: 700;
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            color: #38bdf8;
-        }
-
-        .modal-content {
-            font-size: 0.95rem;
-            color: var(--text-muted);
-            line-height: 1.6;
-            margin-bottom: 25px;
-        }
-
-        .modal-content p {
-            margin-bottom: 12px;
-        }
-
-        .close-modal-btn {
-            width: 100%;
-            background: #1e2235;
-            color: #fff;
-            border: none;
-            padding: 12px;
-            border-radius: 12px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-
-        .close-modal-btn:hover {
-            background: #282d46;
-        }
+        /* KEYFRAMES */
+        @keyframes pulse { 0%, 100% { transform:scale(1); opacity:0.9; } 50% { transform:scale(1.02); opacity:1; box-shadow:0 0 15px rgba(239,68,68,0.3); } }
+        @keyframes float { 0%, 100% { transform:translateY(0); } 50% { transform:translateY(-10px); } }
     </style>
 </head>
 <body>
 
+    <!-- NOTIFIKASI POP-UP AUTOMATIC -->
+    <div class="notif-overlay" id="close-popup">
+        <div class="notif-box">
+            <i class="fa-solid fa-clock-rotate-left"></i>
+            <h2>Maaf, Waktu Akses Habis!</h2>
+            <p>RezFullWeb otomatis ditutup dari jam <b>21:00 (9 Malam)</b> sampai <b>12:00 Siang</b> demi kelancaran server harian.</p>
+            <button class="notif-btn" onclick="document.getElementById('close-popup').classList.remove('show')">Saya Mengerti</button>
+        </div>
+    </div>
+
+    <!-- NAVBAR HEADER -->
     <header>
         <div class="logo">RezFullWeb</div>
+        
+        <!-- LIVE SYSTEM MONITOR (Dinamis: Jam HP Asli + Sisa Waktu) -->
+        <div class="header-timer status-open" id="live-timer">
+            <span id="live-clock">00:00:00</span>
+            <span class="countdown-text" id="countdown-wrapper">Tutup: <span id="countdown-timer">00:00:00</span></span>
+        </div>
+
         <div class="menu-wrapper">
-            <button class="three-dots-btn" id="menu-toggle" aria-label="Menu">
-                <i class="fa-solid fa-ellipsis-vertical"></i>
-            </button>
-            
-            <div class="dropdown-menu" id="dropdown-menu">
-                <a href="https://wa.me/623116920767" target="_blank" class="dropdown-item wa-btn">
-                    <i class="fa-brands fa-whatsapp"></i> Hubungi WhatsApp
-                </a>
-                <button class="dropdown-item policy-btn" id="policy-trigger">
-                    <i class="fa-solid fa-shield-halved"></i> Kebijakan Pengguna
-                </button>
+            <button class="three-dots-btn" id="m-tgl"><i class="fa-solid fa-ellipsis-vertical"></i></button>
+            <div class="dropdown-menu" id="d-menu">
+                <a href="https://wa.me/623116920767" target="_blank" class="dropdown-item wa-btn"><i class="fa-brands fa-whatsapp"></i> WhatsApp</a>
+                <button class="dropdown-item policy-btn" id="p-open"><i class="fa-solid fa-shield-halved"></i> Kebijakan</button>
             </div>
         </div>
     </header>
 
+    <!-- KONTEN GRID UTAMA -->
     <div class="container">
         <div class="hero-section">
             <h2>REZA FULL WEB</h2>
-            <p>Akses semua perkakas digital terbaik dan instan dalam satu platform terintegrasi.</p>
+            <p>Akses semua perkakas digital terbaik dalam satu platform.</p>
         </div>
-
-        <div class="tools-grid">
-            
-            <!-- Grid 1 -->
+        <div class="tools-grid" id="main-grid">
             <div class="tool-card">
-                <div class="card-header">
-                    <span class="tool-num">NO. 01</span>
-                    <i class="fa-solid fa-font tool-icon"></i>
-                </div>
-                <div class="card-body">
-                    <h3 class="tool-name">BRAT GENERATOR</h3>
-                    <p class="tool-desc">Buat teks bergaya estetik ala tren album Brat secara instan. Kustomisasi font, latar belakang warna hijau khas, dan unduh hasilnya dalam format gambar HD.</p>
-                    <a href="https://brat-generated.vercel.app/" target="_blank" class="redirect-btn">
-                        Buka Tools <i class="fa-solid fa-arrow-right"></i>
-                    </a>
-                </div>
+                <div class="card-header"><span class="tool-num">NO. 01</span><i class="fa-solid fa-font"></i></div>
+                <h3 class="tool-name">BRAT GENERATOR</h3><p class="tool-desc">Buat teks bergaya estetik ala tren album Brat instan.</p>
+                <a href="https://brat-generated.vercel.app/" target="_blank" class="redirect-btn">Buka Tools <i class="fa-solid fa-arrow-right"></i></a>
             </div>
-
-            <!-- Grid 2 -->
             <div class="tool-card">
-                <div class="card-header">
-                    <span class="tool-num">NO. 02</span>
-                    <i class="fa-solid fa-compass tool-icon"></i>
-                </div>
-                <div class="card-body">
-                    <h3 class="tool-name">SEARCH PINTEREST</h3>
-                    <p class="tool-desc">Cari dan temukan ribuan ide visual, gambar estetik, hingga referensi desain menarik langsung dari Pinterest secara praktis dan super cepat.</p>
-                    <a href="https://search-pinterest.vercel.app/" target="_blank" class="redirect-btn">
-                        Buka Tools <i class="fa-solid fa-arrow-right"></i>
-                    </a>
-                </div>
+                <div class="card-header"><span class="tool-num">NO. 02</span><i class="fa-solid fa-compass"></i></div>
+                <h3 class="tool-name">SEARCH PINTEREST</h3><p class="tool-desc">Cari dan temukan ribuan ide visual estetik dari Pinterest.</p>
+                <a href="https://search-pinterest.vercel.app/" target="_blank" class="redirect-btn">Buka Tools <i class="fa-solid fa-arrow-right"></i></a>
             </div>
-
-            <!-- Grid 3 -->
             <div class="tool-card">
-                <div class="card-header">
-                    <span class="tool-num">NO. 03</span>
-                    <i class="fa-solid fa-wand-magic-sparkles tool-icon"></i>
-                </div>
-                <div class="card-body">
-                    <h3 class="tool-name">AI IMAGE GENERATED</h3>
-                    <p class="tool-desc">Ubah imajinasi tulisan teks Anda menjadi karya gambar digital yang memukau dan realistis secara otomatis dengan bantuan kecerdasan buatan AI tingkat tinggi.</p>
-                    <a href="https://ai-image-generated-three.vercel.app/" target="_blank" class="redirect-btn">
-                        Buka Tools <i class="fa-solid fa-arrow-right"></i>
-                    </a>
-                </div>
+                <div class="card-header"><span class="tool-num">NO. 03</span><i class="fa-solid fa-wand-magic-sparkles"></i></div>
+                <h3 class="tool-name">AI IMAGE GENERATED</h3><p class="tool-desc">Ubah imajinasi tulisan teks Anda menjadi gambar digital AI.</p>
+                <a href="https://ai-image-generated-three.vercel.app/" target="_blank" class="redirect-btn">Buka Tools <i class="fa-solid fa-arrow-right"></i></a>
             </div>
-
-            <!-- Grid 4 -->
             <div class="tool-card">
-                <div class="card-header">
-                    <span class="tool-num">NO. 04</span>
-                    <i class="fa-solid fa-robot tool-icon"></i>
-                </div>
-                <div class="card-body">
-                    <h3 class="tool-name">SEARCH HAPPYMOD</h3>
-                    <p class="tool-desc">Mesin pencari aplikasi terintegrasi untuk berburu file modifikasi game dan aplikasi terlengkap. Temukan versi mod premium secara aman dan mudah.</p>
-                    <a href="https://search-happymod-t2lm.vercel.app/" target="_blank" class="redirect-btn">
-                        Buka Tools <i class="fa-solid fa-arrow-right"></i>
-                    </a>
-                </div>
+                <div class="card-header"><span class="tool-num">NO. 04</span><i class="fa-solid fa-robot"></i></div>
+                <h3 class="tool-name">SEARCH HAPPYMOD</h3><p class="tool-desc">Mesin pencari terintegrasi untuk file modifikasi aplikasi & game.</p>
+                <a href="https://search-happymod-t2lm.vercel.app/" target="_blank" class="redirect-btn">Buka Tools <i class="fa-solid fa-arrow-right"></i></a>
             </div>
-
-            <!-- Grid 5 (DIUBAH MENJADI NEO-KTP GENERATOR) -->
             <div class="tool-card">
-                <div class="card-header">
-                    <!-- Menggunakan badge-ktp dengan warna Indigo Neon -->
-                    <span class="tool-num badge-ktp">NO. 05</span>
-                    <!-- Mengubah ikon menjadi fa-id-card (KTP) -->
-                    <i class="fa-solid fa-id-card tool-icon"></i>
-                </div>
-                <div class="card-body">
-                    <!-- Judul Diubah -->
-                    <h3 class="tool-name">NEO-KTP GENERATOR</h3>
-                    <!-- Deskripsi Diubah -->
-                    <p class="tool-desc">Buat replika gambar KTP (Kartu Tanda Penduduk) Indonesia dengan desain modern dan gaya futuristik secara instan. Lengkap dengan opsi kustomisasi data untuk keperluan hiburan, edukasi, atau <i>roleplay</i>.</p>
-                    <!-- Link Tujuan Diubah (asumsi link notifikasi sebelumnya) -->
-                    <a href="https://e-ktp-generated.vercel.app/" target="_blank" class="redirect-btn">
-                        Buka Tools <i class="fa-solid fa-arrow-right"></i>
-                    </a>
-                </div>
+                <div class="card-header"><span class="tool-num">NO. 05</span><i class="fa-solid fa-id-card"></i></div>
+                <h3 class="tool-name">NEO-KTP GENERATOR</h3><p class="tool-desc">Buat replika gambar KTP Indonesia dengan desain modern futuristik.</p>
+                <a href="https://e-ktp-generated.vercel.app/" target="_blank" class="redirect-btn">Buka Tools <i class="fa-solid fa-arrow-right"></i></a>
             </div>
-
         </div>
     </div>
 
-    <!-- Modal Pop-Up -->
-    <div class="modal-overlay" id="policy-modal">
+    <!-- MODAL POPUP PRIVASI -->
+    <div class="modal-overlay" id="p-modal">
         <div class="modal-box">
-            <div class="modal-title">
-                <i class="fa-solid fa-shield-halved"></i> Kebijakan Pengguna
-            </div>
-            <div class="modal-content">
-                <p>Selamat datang di <strong>RezFullWeb</strong>. Harap baca kebijakan berikut sebelum menggunakan layanan kami:</p>
-                <p>1. <strong>Penggunaan Layanan:</strong> Semua tools yang tersedia di platform ini disediakan secara gratis dan bebas digunakan untuk keperluan personal maupun profesional secara bijak.</p>
-                <p>2. <strong>Keamanan Data:</strong> Kami sangat menjaga privasi Anda. RezFullWeb tidak menyimpan data, file, atau teks apa pun yang Anda proses melalui tools kami ke dalam server eksternal kami.</p>
-                <p>3. <strong>Batasan Tanggung Jawab:</strong> Kami selalu berusaha menjaga performa web tetap optimal, namun kami tidak bertanggung jawab atas segala bentuk kehilangan data akibat kesalahan teknis operasional perangkat pengguna.</p>
-            </div>
-            <button class="close-modal-btn" id="close-modal">Saya Mengerti & Setuju</button>
+            <h3 style="margin-bottom:15px"><i class="fa-solid fa-shield-halved"></i> Kebijakan Pengguna</h3>
+            <p style="color:var(--muted); font-size:0.9rem; line-height:1.6; margin-bottom:20px;">Semua perkakas web disediakan gratis. Kami menjamin kerahasiaan data penuh karena sistem memproses data secara lokal tanpa disimpan ke server luar.</p>
+            <button class="redirect-btn" id="p-close" style="background:var(--accent)">Saya Setuju</button>
         </div>
     </div>
 
     <script>
-        const menuToggle = document.getElementById('menu-toggle');
-        const dropdownMenu = document.getElementById('dropdown-menu');
-        const policyTrigger = document.getElementById('policy-trigger');
-        const policyModal = document.getElementById('policy-modal');
-        const closeModal = document.getElementById('close-modal');
+        // Dropdown & Modal UI Logic
+        const mTgl = document.getElementById('m-tgl'), dMenu = document.getElementById('d-menu'),
+              pOpen = document.getElementById('p-open'), pModal = document.getElementById('p-modal'), pClose = document.getElementById('p-close');
+        
+        mTgl.addEventListener('click', (e) => { e.stopPropagation(); dMenu.classList.toggle('show'); });
+        document.addEventListener('click', () => dMenu.classList.remove('show'));
+        pOpen.addEventListener('click', () => { dMenu.classList.remove('show'); pModal.classList.add('open'); });
+        pClose.addEventListener('click', () => pModal.classList.remove('open'));
 
-        // Logic Toggle Menu Titik Tiga
-        menuToggle.addEventListener('click', (e) => {
-            e.stopPropagation();
-            dropdownMenu.classList.toggle('show');
-        });
+        // LIVE CORE MANAGEMENT ENGINE (OPEN 12:00 - CLOSE 21:00)
+        const timerBar = document.getElementById('live-timer'),
+              liveClock = document.getElementById('live-clock'),
+              countdownTimer = document.getElementById('countdown-timer'),
+              countdownWrapper = document.getElementById('countdown-wrapper'),
+              popup = document.getElementById('close-popup'),
+              grid = document.getElementById('main-grid');
 
-        document.addEventListener('click', () => {
-            dropdownMenu.classList.remove('show');
-        });
+        let hasShownPopup = false;
 
-        dropdownMenu.addEventListener('click', (e) => {
-            e.stopPropagation();
-        });
+        function runLiveSystem() {
+            const now = new Date();
+            const hr = now.getHours();
+            const min = now.getMinutes();
+            const sec = now.getSeconds();
+            
+            // Konversi ke total menit harian
+            const currentTotalMinutes = (hr * 60) + min;
+            const closeTimeMinutes = (21 * 60) + 0; // 21:00 (9 Malam)
+            const openTimeMinutes = (12 * 60) + 0;  // 12:00 (Siang)
 
-        // Tampilkan Modal Kebijakan Pengguna
-        policyTrigger.addEventListener('click', () => {
-            dropdownMenu.classList.remove('show'); 
-            policyModal.classList.add('open');
-        });
+            // Tampilkan Jam HP Asli di Bagian Depan Terus Menerus
+            liveClock.innerHTML = `<i class="fa-regular fa-clock"></i> ${String(hr).padStart(2, '0')}:${String(min).padStart(2, '0')}:${String(sec).padStart(2, '0')}`;
 
-        // Tutup Modal
-        closeModal.addEventListener('click', () => {
-            policyModal.classList.remove('open');
-        });
-
-        policyModal.addEventListener('click', (e) => {
-            if (e.target === policyModal) {
-                policyModal.classList.remove('open');
+            let isClosed = false;
+            if (currentTotalMinutes >= closeTimeMinutes || currentTotalMinutes < openTimeMinutes) {
+                isClosed = true;
             }
-        });
+
+            if (isClosed) {
+                // ================== MODE TUTUP (9 MALAM - 12 SIANG) ==================
+                timerBar.className = "header-timer status-close";
+                countdownWrapper.innerHTML = `Buka: <span id="countdown-timer">00:00:00</span>`;
+                
+                grid.style.pointerEvents = 'none';
+                grid.style.opacity = '0.35';
+                grid.style.filter = 'blur(4px)'; // Bikin card blur biar estetik pas tutup
+                
+                // Trigger pop-up transisi smooth otomatis pas jam 9 teng
+                if (!hasShownPopup) {
+                    popup.classList.add('show');
+                    hasShownPopup = true;
+                }
+
+                // Hitung countdown mundur sisa waktu ke Jam 12 Siang
+                let tgtOpen = new Date(now);
+                if (currentTotalMinutes >= closeTimeMinutes) tgtOpen.setDate(now.getDate() + 1);
+                tgtOpen.setHours(12, 0, 0, 0);
+                
+                let diff = tgtOpen - now;
+                let th = String(Math.floor((diff / 3600000) % 24)).padStart(2, '0');
+                let tm = String(Math.floor((diff / 60000) % 60)).padStart(2, '0');
+                let ts = String(Math.floor((diff / 1000) % 60)).padStart(2, '0');
+                
+                document.getElementById('countdown-timer').textContent = `${th}:${tm}:${ts}`;
+            } else {
+                // ================== MODE BUKA / ONLINE (12 SIANG - 9 MALAM) ==================
+                timerBar.className = "header-timer status-open";
+                countdownWrapper.innerHTML = `Tutup: <span id="countdown-timer">00:00:00</span>`;
+                
+                grid.style.pointerEvents = 'auto';
+                grid.style.opacity = '1';
+                grid.style.filter = 'blur(0px)';
+                popup.classList.remove('show');
+                hasShownPopup = false;
+
+                // Hitung countdown mundur sisa waktu sebelum penutupan (Ke jam 9 malam)
+                let tgtClose = new Date(now);
+                tgtClose.setHours(21, 0, 0, 0);
+                
+                let diff = tgtClose - now;
+                let th = String(Math.floor((diff / 3600000) % 24)).padStart(2, '0');
+                let tm = String(Math.floor((diff / 60000) % 60)).padStart(2, '0');
+                let ts = String(Math.floor((diff / 1000) % 60)).padStart(2, '0');
+                
+                document.getElementById('countdown-timer').textContent = `${th}:${tm}:${ts}`;
+            }
+        }
+
+        setInterval(runLiveSystem, 1000);
+        runLiveSystem(); // Start langsung tanpa jeda
     </script>
 </body>
-    </html>
+</html>
