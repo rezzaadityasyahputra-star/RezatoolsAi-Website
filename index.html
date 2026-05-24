@@ -1,235 +1,427 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en" class="scroll-smooth">
 <head>
-    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RezFullWeb - All Tools Premium</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        :root { --bg: #090a0f; --card: rgba(17,19,28,0.7); --accent: #6366f1; --text: #f3f4f6; --muted: #9ca3af; }
-        * { margin:0; padding:0; box-sizing:border-box; font-family:'Plus Jakarta Sans',sans-serif; }
-        body { background: radial-gradient(circle at top right, #131525 0%, #090a0f 60%); color:var(--text); min-height:100vh; overflow-x:hidden; }
-        
-        /* HEADER + LIVE TIME CONTAINER */
-        header { width:100%; padding:20px 5%; display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(255,255,255,0.05); backdrop-filter:blur(10px); position:sticky; top:0; z-index:100; }
-        .logo { font-size:1.4rem; font-weight:700; background:linear-gradient(to right, #fff, var(--accent)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
-        
-        /* STATUS CHIPS */
-        .header-timer { display:flex; align-items:center; gap:10px; padding:6px 16px; border-radius:30px; font-weight:600; font-family:monospace; font-size:0.88rem; transition: 0.3s; }
-        .status-open { background:rgba(34,197,94,0.08); border:1px solid rgba(34,197,94,0.25); color:#4ade80; }
-        .status-close { background:rgba(239,68,68,0.08); border:1px solid rgba(239,68,68,0.25); color:#f87171; animation:pulse 2s infinite; }
-        .countdown-text { opacity:0.8; font-size:0.8rem; border-left:1px solid rgba(255,255,255,0.2); padding-left:8px; margin-left:2px; }
-        
-        /* DROPDOWN & MENU */
-        .menu-wrapper { position:relative; }
-        .three-dots-btn { background:transparent; border:none; color:var(--text); font-size:1.2rem; cursor:pointer; width:35px; height:35px; border-radius:50%; display:flex; align-items:center; justify-content:center; }
-        .dropdown-menu { position:absolute; top:45px; right:0; background:#11131c; border:1px solid rgba(255,255,255,0.08); border-radius:12px; padding:8px; width:220px; opacity:0; visibility:hidden; transform:translateY(-10px); transition:0.3s; box-shadow:-5px 5px 20px rgba(0,0,0,0.5); }
-        .dropdown-menu.show { opacity:1; visibility:visible; transform:translateY(0); }
-        .dropdown-item { width:100%; padding:10px; background:transparent; border:none; color:var(--text); font-size:0.9rem; text-align:left; cursor:pointer; display:flex; align-items:center; gap:10px; text-decoration:none; }
-        .dropdown-item.wa-btn { color:#22c55e; } .dropdown-item.policy-btn { color:#38bdf8; }
-        
-        /* CONTEN CODES */
-        .container { max-width:1200px; margin:40px auto; padding:0 20px; }
-        .hero-section { text-align:center; margin-bottom:40px; }
-        .tools-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:20px; transition: 0.4s ease; }
-        .tool-card { background:var(--card); border:1px solid rgba(255,255,255,0.03); border-radius:20px; padding:25px; display:flex; flex-direction:column; justify-content:space-between; transition:0.3s; backdrop-filter:blur(12px); }
-        .tool-card:hover { transform:translateY(-5px); border-color:var(--accent); box-shadow:0 10px 25px rgba(99,102,241,0.25); }
-        .card-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; }
-        .tool-num { font-size:0.8rem; font-weight:700; color:var(--accent); background:rgba(99,102,241,0.1); padding:3px 10px; border-radius:20px; }
-        .tool-name { font-size:1.15rem; font-weight:600; margin-bottom:8px; color:#fff; }
-        .tool-desc { font-size:0.88rem; color:var(--muted); line-height:1.5; margin-bottom:20px; }
-        .redirect-btn { width:100%; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); padding:12px; border-radius:10px; color:#fff; font-weight:600; text-decoration:none; display:flex; align-items:center; justify-content:center; gap:8px; transition:0.2s; }
-        .tool-card:hover .redirect-btn { background:linear-gradient(135deg, var(--accent), #4f46e5); border-color:transparent; }
-
-        /* NOTIFIKASI POP-UP OVERLAY (ANIMASI DAN TRANSISI SMOOTH) */
-        .notif-overlay { position:fixed; inset:0; background:rgba(5,6,10,0); backdrop-filter:blur(0px); display:flex; align-items:center; justify-content:center; z-index:9999; visibility:hidden; transition: background 0.5s ease, backdrop-filter 0.5s ease, visibility 0.5s; }
-        .notif-overlay.show { visibility:visible; background:rgba(5,6,10,0.85); backdrop-filter:blur(8px); }
-        
-        .notif-box { background:#11131c; border:2px solid #ef4444; width:90%; max-width:420px; border-radius:24px; padding:35px 30px; text-align:center; box-shadow:0 0 30px rgba(239,68,68,0.2); transform:translateY(50px) scale(0.9); opacity:0; transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.5s; }
-        .notif-overlay.show .notif-box { transform:translateY(0) scale(1); opacity:1; }
-        
-        .notif-box i { font-size:3.5rem; color:#ef4444; margin-bottom:15px; animation:float 2.5s infinite ease-in-out; }
-        .notif-box h2 { font-size:1.5rem; margin-bottom:10px; color:#fff; }
-        .notif-box p { color:var(--muted); font-size:0.92rem; line-height:1.5; margin-bottom:25px; }
-        .notif-btn { width:100%; background:#ef4444; color:#fff; border:none; padding:12px; border-radius:12px; font-weight:700; cursor:pointer; box-shadow:0 4px 10px rgba(239,68,68,0.3); transition:0.2s; }
-        .notif-btn:hover { background:#dc2626; }
-
-        /* MODAL KEBIJAKAN */
-        .modal-overlay { position:fixed; inset:0; background:rgba(5,6,10,0.8); backdrop-filter:blur(5px); display:flex; align-items:center; justify-content:center; z-index:150; opacity:0; visibility:hidden; transition:0.3s; }
-        .modal-overlay.open { opacity:1; visibility:visible; }
-        .modal-box { background:#11131c; border:1px solid rgba(255,255,255,0.1); width:90%; max-width:450px; border-radius:20px; padding:25px; }
-
-        /* KEYFRAMES */
-        @keyframes pulse { 0%, 100% { transform:scale(1); opacity:0.9; } 50% { transform:scale(1.02); opacity:1; box-shadow:0 0 15px rgba(239,68,68,0.3); } }
-        @keyframes float { 0%, 100% { transform:translateY(0); } 50% { transform:translateY(-10px); } }
-    </style>
-</head>
-<body>
-
-    <!-- NOTIFIKASI POP-UP AUTOMATIC -->
-    <div class="notif-overlay" id="close-popup">
-        <div class="notif-box">
-            <i class="fa-solid fa-clock-rotate-left"></i>
-            <h2>Maaf, Waktu Akses Habis!</h2>
-            <p>RezFullWeb otomatis ditutup dari jam <b>21:00 (9 Malam)</b> sampai <b>12:00 Siang</b> demi kelancaran server harian.</p>
-            <button class="notif-btn" onclick="document.getElementById('close-popup').classList.remove('show')">Saya Mengerti</button>
-        </div>
-    </div>
-
-    <!-- NAVBAR HEADER -->
-    <header>
-        <div class="logo">RezFullWeb</div>
-        
-        <!-- LIVE SYSTEM MONITOR (Dinamis: Jam HP Asli + Sisa Waktu) -->
-        <div class="header-timer status-open" id="live-timer">
-            <span id="live-clock">00:00:00</span>
-            <span class="countdown-text" id="countdown-wrapper">Tutup: <span id="countdown-timer">00:00:00</span></span>
-        </div>
-
-        <div class="menu-wrapper">
-            <button class="three-dots-btn" id="m-tgl"><i class="fa-solid fa-ellipsis-vertical"></i></button>
-            <div class="dropdown-menu" id="d-menu">
-                <a href="https://wa.me/623116920767" target="_blank" class="dropdown-item wa-btn"><i class="fa-brands fa-whatsapp"></i> WhatsApp</a>
-                <button class="dropdown-item policy-btn" id="p-open"><i class="fa-solid fa-shield-halved"></i> Kebijakan</button>
-            </div>
-        </div>
-    </header>
-
-    <!-- KONTEN GRID UTAMA -->
-    <div class="container">
-        <div class="hero-section">
-            <h2>REZA FULL WEB</h2>
-            <p>Akses semua perkakas digital terbaik dalam satu platform.</p>
-        </div>
-        <div class="tools-grid" id="main-grid">
-            <div class="tool-card">
-                <div class="card-header"><span class="tool-num">NO. 01</span><i class="fa-solid fa-font"></i></div>
-                <h3 class="tool-name">BRAT GENERATOR</h3><p class="tool-desc">Buat teks bergaya estetik ala tren album Brat instan.</p>
-                <a href="https://brat-generated.vercel.app/" target="_blank" class="redirect-btn">Buka Tools <i class="fa-solid fa-arrow-right"></i></a>
-            </div>
-            <div class="tool-card">
-                <div class="card-header"><span class="tool-num">NO. 02</span><i class="fa-solid fa-compass"></i></div>
-                <h3 class="tool-name">SEARCH PINTEREST</h3><p class="tool-desc">Cari dan temukan ribuan ide visual estetik dari Pinterest.</p>
-                <a href="https://search-pinterest.vercel.app/" target="_blank" class="redirect-btn">Buka Tools <i class="fa-solid fa-arrow-right"></i></a>
-            </div>
-            <div class="tool-card">
-                <div class="card-header"><span class="tool-num">NO. 03</span><i class="fa-solid fa-wand-magic-sparkles"></i></div>
-                <h3 class="tool-name">AI IMAGE GENERATED</h3><p class="tool-desc">Ubah imajinasi tulisan teks Anda menjadi gambar digital AI.</p>
-                <a href="https://ai-image-generated-three.vercel.app/" target="_blank" class="redirect-btn">Buka Tools <i class="fa-solid fa-arrow-right"></i></a>
-            </div>
-            <div class="tool-card">
-                <div class="card-header"><span class="tool-num">NO. 04</span><i class="fa-solid fa-robot"></i></div>
-                <h3 class="tool-name">SEARCH HAPPYMOD</h3><p class="tool-desc">Mesin pencari terintegrasi untuk file modifikasi aplikasi & game.</p>
-                <a href="https://search-happymod-t2lm.vercel.app/" target="_blank" class="redirect-btn">Buka Tools <i class="fa-solid fa-arrow-right"></i></a>
-            </div>
-            <div class="tool-card">
-                <div class="card-header"><span class="tool-num">NO. 05</span><i class="fa-solid fa-id-card"></i></div>
-                <h3 class="tool-name">NEO-KTP GENERATOR</h3><p class="tool-desc">Buat replika gambar KTP Indonesia dengan desain modern futuristik.</p>
-                <a href="https://e-ktp-generated.vercel.app/" target="_blank" class="redirect-btn">Buka Tools <i class="fa-solid fa-arrow-right"></i></a>
-            </div>
-        </div>
-    </div>
-
-    <!-- MODAL POPUP PRIVASI -->
-    <div class="modal-overlay" id="p-modal">
-        <div class="modal-box">
-            <h3 style="margin-bottom:15px"><i class="fa-solid fa-shield-halved"></i> Kebijakan Pengguna</h3>
-            <p style="color:var(--muted); font-size:0.9rem; line-height:1.6; margin-bottom:20px;">Semua perkakas web disediakan gratis. Kami menjamin kerahasiaan data penuh karena sistem memproses data secara lokal tanpa disimpan ke server luar.</p>
-            <button class="redirect-btn" id="p-close" style="background:var(--accent)">Saya Setuju</button>
-        </div>
-    </div>
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RezHub — Modern Multi Tools Platform</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
     <script>
-        // Dropdown & Modal UI Logic
-        const mTgl = document.getElementById('m-tgl'), dMenu = document.getElementById('d-menu'),
-              pOpen = document.getElementById('p-open'), pModal = document.getElementById('p-modal'), pClose = document.getElementById('p-close');
-        
-        mTgl.addEventListener('click', (e) => { e.stopPropagation(); dMenu.classList.toggle('show'); });
-        document.addEventListener('click', () => dMenu.classList.remove('show'));
-        pOpen.addEventListener('click', () => { dMenu.classList.remove('show'); pModal.classList.add('open'); });
-        pClose.addEventListener('click', () => pModal.classList.remove('open'));
-
-        // LIVE CORE MANAGEMENT ENGINE (OPEN 12:00 - CLOSE 21:00)
-        const timerBar = document.getElementById('live-timer'),
-              liveClock = document.getElementById('live-clock'),
-              countdownTimer = document.getElementById('countdown-timer'),
-              countdownWrapper = document.getElementById('countdown-wrapper'),
-              popup = document.getElementById('close-popup'),
-              grid = document.getElementById('main-grid');
-
-        let hasShownPopup = false;
-
-        function runLiveSystem() {
-            const now = new Date();
-            const hr = now.getHours();
-            const min = now.getMinutes();
-            const sec = now.getSeconds();
-            
-            // Konversi ke total menit harian
-            const currentTotalMinutes = (hr * 60) + min;
-            const closeTimeMinutes = (21 * 60) + 0; // 21:00 (9 Malam)
-            const openTimeMinutes = (12 * 60) + 0;  // 12:00 (Siang)
-
-            // Tampilkan Jam HP Asli di Bagian Depan Terus Menerus
-            liveClock.innerHTML = `<i class="fa-regular fa-clock"></i> ${String(hr).padStart(2, '0')}:${String(min).padStart(2, '0')}:${String(sec).padStart(2, '0')}`;
-
-            let isClosed = false;
-            if (currentTotalMinutes >= closeTimeMinutes || currentTotalMinutes < openTimeMinutes) {
-                isClosed = true;
-            }
-
-            if (isClosed) {
-                // ================== MODE TUTUP (9 MALAM - 12 SIANG) ==================
-                timerBar.className = "header-timer status-close";
-                countdownWrapper.innerHTML = `Buka: <span id="countdown-timer">00:00:00</span>`;
-                
-                grid.style.pointerEvents = 'none';
-                grid.style.opacity = '0.35';
-                grid.style.filter = 'blur(4px)'; // Bikin card blur biar estetik pas tutup
-                
-                // Trigger pop-up transisi smooth otomatis pas jam 9 teng
-                if (!hasShownPopup) {
-                    popup.classList.add('show');
-                    hasShownPopup = true;
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        cyber: {
+                            dark: '#050508',
+                            card: '#0d0d15',
+                            orange: '#FF5500',
+                            neonOrange: '#FF7700',
+                            blue: '#00E5FF',
+                            glowBlue: '#00B0FF'
+                        }
+                    },
+                    boxShadow: {
+                        'neon-orange': '0 0 20px rgba(255, 85, 0, 0.45), 0 0 40px rgba(255, 85, 0, 0.15)',
+                        'neon-blue': '0 0 20px rgba(0, 229, 255, 0.45), 0 0 40px rgba(0, 229, 255, 0.15)',
+                    }
                 }
-
-                // Hitung countdown mundur sisa waktu ke Jam 12 Siang
-                let tgtOpen = new Date(now);
-                if (currentTotalMinutes >= closeTimeMinutes) tgtOpen.setDate(now.getDate() + 1);
-                tgtOpen.setHours(12, 0, 0, 0);
-                
-                let diff = tgtOpen - now;
-                let th = String(Math.floor((diff / 3600000) % 24)).padStart(2, '0');
-                let tm = String(Math.floor((diff / 60000) % 60)).padStart(2, '0');
-                let ts = String(Math.floor((diff / 1000) % 60)).padStart(2, '0');
-                
-                document.getElementById('countdown-timer').textContent = `${th}:${tm}:${ts}`;
-            } else {
-                // ================== MODE BUKA / ONLINE (12 SIANG - 9 MALAM) ==================
-                timerBar.className = "header-timer status-open";
-                countdownWrapper.innerHTML = `Tutup: <span id="countdown-timer">00:00:00</span>`;
-                
-                grid.style.pointerEvents = 'auto';
-                grid.style.opacity = '1';
-                grid.style.filter = 'blur(0px)';
-                popup.classList.remove('show');
-                hasShownPopup = false;
-
-                // Hitung countdown mundur sisa waktu sebelum penutupan (Ke jam 9 malam)
-                let tgtClose = new Date(now);
-                tgtClose.setHours(21, 0, 0, 0);
-                
-                let diff = tgtClose - now;
-                let th = String(Math.floor((diff / 3600000) % 24)).padStart(2, '0');
-                let tm = String(Math.floor((diff / 60000) % 60)).padStart(2, '0');
-                let ts = String(Math.floor((diff / 1000) % 60)).padStart(2, '0');
-                
-                document.getElementById('countdown-timer').textContent = `${th}:${tm}:${ts}`;
             }
         }
+    </script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- AOS CSS -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
 
-        setInterval(runLiveSystem, 1000);
-        runLiveSystem(); // Start langsung tanpa jeda
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #050508;
+            overflow-x: hidden;
+        }
+        .font-future {
+            font-family: 'Orbitron', sans-serif;
+        }
+        /* Custom Custom Glow Cursor */
+        #custom-cursor {
+            width: 24px;
+            height: 24px;
+            background: rgba(255, 85, 0, 0.2);
+            border: 2px solid #FF5500;
+            box-shadow: 0 0 15px #FF5500;
+            border-radius: 50%;
+            position: fixed;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            z-index: 9999;
+            transition: width 0.2s, height 0.2s, background-color 0.2s, border-color 0.2s;
+        }
+        /* Glassmorphism Matrix Styling */
+        .glass-nav {
+            background: rgba(5, 5, 8, 0.75);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .glass-card {
+            background: rgba(13, 13, 21, 0.45);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            transition: border 0.4s, transform 0.4s, box-shadow 0.4s;
+        }
+        .glass-card:hover {
+            border-color: rgba(255, 85, 0, 0.4);
+        }
+        .glass-menu {
+            background: rgba(10, 10, 18, 0.85);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border-left: 1px solid rgba(255, 85, 0, 0.2);
+        }
+        /* Gradient Background Motion Animation */
+        .bg-gradient-animate {
+            background-size: 200% 200%;
+            animation: gradientMove 12s ease infinite;
+        }
+        @keyframes gradientMove {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        /* Hide default scrollbar track */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #050508;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #FF5500;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body class="text-white antialiased selection:bg-cyber-orange selection:text-white">
+
+    <!-- Custom Glow Cursor -->
+    <div id="custom-cursor" class="hidden md:block"></div>
+
+    <!-- Loading Screen Modern -->
+    <div id="loading-screen" class="fixed inset-0 bg-cyber-dark z-[10000] flex flex-col justify-center items-center">
+        <div class="relative flex flex-col items-center">
+            <div class="w-16 h-16 border-4 border-cyber-orange border-t-cyber-blue rounded-full animate-spin shadow-neon-orange mb-6"></div>
+            <h2 class="font-future text-3xl font-black tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-white via-cyber-orange to-cyber-blue">
+                REZHB
+            </h2>
+            <p class="text-neutral-500 font-medium text-xs tracking-widest mt-2">INITIALIZING PLATFORM...</p>
+        </div>
+    </div>
+
+    <!-- Floating Action: Back To Top -->
+    <button id="btn-back-to-top" class="fixed bottom-6 right-6 z-50 p-4 rounded-xl bg-cyber-orange/10 border border-cyber-orange/30 text-cyber-orange opacity-0 translate-y-10 transition-all duration-500 shadow-neon-orange hover:bg-cyber-orange hover:text-white group">
+        <i class="fa-solid fa-chevron-up text-lg group-hover:-translate-y-1 transition-transform"></i>
+    </button>
+
+    <!-- FLOATING PARTICLES BACKGROUND -->
+    <div class="fixed inset-0 pointer-events-none z-0 opacity-20 bg-[radial-gradient(#ff5500_1px,transparent_1px)] [background-size:40px_40px]"></div>
+    <div class="fixed top-1/4 left-1/4 w-96 h-96 bg-cyber-orange/10 rounded-full blur-[150px] pointer-events-none z-0"></div>
+    <div class="fixed bottom-1/3 right-1/4 w-96 h-96 bg-cyber-blue/10 rounded-full blur-[150px] pointer-events-none z-0"></div>
+
+    <!-- HEADER / NAVBAR -->
+    <nav class="fixed top-0 w-full z-50 glass-nav py-4 px-6 md:px-12 flex justify-between items-center transition-all duration-300">
+        <div class="flex items-center gap-3 group cursor-pointer">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-cyber-orange to-cyber-blue flex items-center justify-center shadow-neon-orange group-hover:rotate-12 transition-transform duration-300">
+                <i class="fa-solid fa-cubes text-white text-lg"></i>
+            </div>
+            <span class="font-future text-2xl font-black tracking-wider text-white">
+                Rez<span class="text-cyber-orange">Hub</span>
+            </span>
+        </div>
+        
+        <!-- Toggle Menu Titik Tiga -->
+        <button id="menu-toggle-btn" class="w-11 h-11 rounded-xl glass-card flex items-center justify-center text-xl text-neutral-400 hover:text-cyber-orange hover:border-cyber-orange/40 transition-colors focus:outline-none relative overflow-hidden ripple-btn">
+            <i class="fa-solid fa-ellipsis-vertical"></i>
+        </button>
+    </nav>
+
+    <!-- POPUP / SIDEBAR DIAGONAL MENU -->
+    <div id="sidebar-overlay" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-md opacity-0 pointer-events-none transition-opacity duration-500"></div>
+    <div id="sidebar-menu" class="fixed top-0 right-0 h-full w-[320px] sm:w-[380px] z-[51] glass-menu translate-x-full transition-transform duration-500 p-8 flex flex-col justify-between">
+        <div>
+            <div class="flex justify-between items-center pb-6 border-b border-white/5 mb-8">
+                <h3 class="font-future font-bold tracking-wider text-sm text-neutral-400">// CONTROL DASHBOARD</h3>
+                <button id="menu-close-btn" class="text-neutral-400 hover:text-cyber-orange text-2xl">&times;</button>
+            </div>
+
+            <!-- ISI MENU TITIK TIGA -->
+            <div class="space-y-4">
+                <a href="https://wa.me/6283116920767" target="_blank" class="w-full flex items-center gap-4 p-4 rounded-xl glass-card group hover:shadow-neon-orange relative overflow-hidden ripple-btn block">
+                    <div class="w-10 h-10 rounded-lg bg-emerald-500/10 text-emerald-400 flex items-center justify-center text-lg group-hover:bg-emerald-500 group-hover:text-white transition-all">
+                        <i class="fa-brands fa-whatsapp"></i>
+                    </div>
+                    <span class="font-medium text-sm text-neutral-300 group-hover:text-white transition-colors">Hubungi WhatsApp</span>
+                    <i class="fa-solid fa-chevron-right text-xs text-neutral-600 ml-auto group-hover:text-cyber-orange transition-colors"></i>
+                </a>
+
+                <a href="policy.html" class="w-full flex items-center gap-4 p-4 rounded-xl glass-card group hover:shadow-neon-blue relative overflow-hidden ripple-btn block">
+                    <div class="w-10 h-10 rounded-lg bg-cyber-blue/10 text-cyber-blue flex items-center justify-center text-lg group-hover:bg-cyber-blue group-hover:text-white transition-all">
+                        <i class="fa-solid fa-gavel"></i>
+                    </div>
+                    <span class="font-medium text-sm text-neutral-300 group-hover:text-white transition-colors">Kebijakan Website</span>
+                    <i class="fa-solid fa-chevron-right text-xs text-neutral-600 ml-auto group-hover:text-cyber-blue transition-colors"></i>
+                </a>
+
+                <a href="privacy.html" class="w-full flex items-center gap-4 p-4 rounded-xl glass-card group hover:shadow-neon-blue relative overflow-hidden ripple-btn block">
+                    <div class="w-10 h-10 rounded-lg bg-indigo-500/10 text-indigo-400 flex items-center justify-center text-lg group-hover:bg-indigo-500 group-hover:text-white transition-all">
+                        <i class="fa-solid fa-shield-halved"></i>
+                    </div>
+                    <span class="font-medium text-sm text-neutral-300 group-hover:text-white transition-colors">Kebijakan Privasi</span>
+                    <i class="fa-solid fa-chevron-right text-xs text-neutral-600 ml-auto group-hover:text-cyber-blue transition-colors"></i>
+                </a>
+            </div>
+        </div>
+
+        <div class="border-t border-white/5 pt-6 text-center text-xs text-neutral-600 font-future tracking-wider">
+            REZHUB SYSTEM v1.0.2
+        </div>
+    </div>
+
+
+    <!-- HERO SECTION -->
+    <section class="relative min-h-[60vh] md:min-h-[70vh] flex items-center justify-center pt-32 pb-16 px-6 z-10 overflow-hidden">
+        <div class="text-center max-w-4xl mx-auto relative z-10 flex flex-col items-center">
+            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full glass-card border border-cyber-orange/20 mb-6 bg-gradient-animate bg-gradient-to-r from-cyber-orange/10 via-cyber-blue/5 to-cyber-orange/10">
+                <span class="w-2 h-2 rounded-full bg-cyber-orange shadow-neon-orange animate-pulse"></span>
+                <span class="text-xs font-future tracking-widest font-bold text-neutral-300">NEXT-GEN WORKSPACE</span>
+            </div>
+
+            <h1 id="hero-title" class="font-future text-5xl md:text-8xl font-black tracking-tighter leading-none mb-6">
+                RezHub <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyber-orange via-amber-500 to-cyber-blue drop-shadow-[0_0_30px_rgba(255,85,0,0.2)]">All Tools</span>
+            </h1>
+            
+            <p id="hero-subtitle" class="text-neutral-400 max-w-xl text-base md:text-lg mb-8 tracking-wide font-light">
+                Modern Multi Tools Platform. Akses instan ke seluruh ekosistem peralatan digital masa depan berkecepatan tinggi dalam satu ruang kendali terpusat.
+            </p>
+        </div>
+    </section>
+
+
+    <!-- MAIN CONTENT: 5 TOOLS GRID -->
+    <main class="max-w-7xl mx-auto px-6 md:px-12 pb-32 z-10 relative">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            
+            <!-- GRID 1: Brat Generator -->
+            <div class="glass-card rounded-2xl p-6 flex flex-col justify-between group hover:shadow-neon-orange hover:-translate-y-2 transition-all duration-300" data-aos="fade-up" data-aos-delay="100">
+                <div>
+                    <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-cyber-orange to-amber-500 flex items-center justify-center shadow-lg mb-6 group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-font text-white text-xl"></i>
+                    </div>
+                    <h3 class="font-future font-bold text-xl mb-2 text-white group-hover:text-cyber-orange transition-colors">Brat Generator</h3>
+                    <p class="text-neutral-400 text-sm leading-relaxed mb-6">Generator tulisan brat aesthetic modern dengan kustomisasi font unik bergaya trend kontemporer secara instan.</p>
+                </div>
+                <a href="brat.html" class="w-full py-3 rounded-xl bg-white/5 border border-white/10 font-future text-xs font-bold tracking-wider hover:bg-cyber-orange hover:text-white hover:border-cyber-orange hover:shadow-neon-orange transition-all duration-300 text-center flex items-center justify-center gap-2 relative overflow-hidden ripple-btn">
+                    OPEN TOOL <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+                </a>
+            </div>
+
+            <!-- GRID 2: Search Pinterest -->
+            <div class="glass-card rounded-2xl p-6 flex flex-col justify-between group hover:shadow-neon-blue hover:-translate-y-2 transition-all duration-300" data-aos="fade-up" data-aos-delay="200">
+                <div>
+                    <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-cyber-blue to-indigo-600 flex items-center justify-center shadow-lg mb-6 group-hover:scale-110 transition-transform">
+                        <i class="fa-brands fa-pinterest-p text-white text-xl"></i>
+                    </div>
+                    <h3 class="font-future font-bold text-xl mb-2 text-white group-hover:text-cyber-blue transition-colors">Search Pinterest</h3>
+                    <p class="text-neutral-400 text-sm leading-relaxed mb-6">Cari gambar Pinterest dengan kata kunci aesthetic secara real-time melalui integrasi API premium super cepat.</p>
+                </div>
+                <a href="pinterest.html" class="w-full py-3 rounded-xl bg-white/5 border border-white/10 font-future text-xs font-bold tracking-wider hover:bg-cyber-blue hover:text-white hover:border-cyber-blue hover:shadow-neon-blue transition-all duration-300 text-center flex items-center justify-center gap-2 relative overflow-hidden ripple-btn">
+                    OPEN TOOL <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+                </a>
+            </div>
+
+            <!-- GRID 3: AI Image Generated -->
+            <div class="glass-card rounded-2xl p-6 flex flex-col justify-between group hover:shadow-neon-orange hover:-translate-y-2 transition-all duration-300" data-aos="fade-up" data-aos-delay="300">
+                <div>
+                    <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-cyber-orange to-fuchsia-600 flex items-center justify-center shadow-lg mb-6 group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-wand-magic-sparkles text-white text-xl"></i>
+                    </div>
+                    <h3 class="font-future font-bold text-xl mb-2 text-white group-hover:text-cyber-orange transition-colors">AI Image Generated</h3>
+                    <p class="text-neutral-400 text-sm leading-relaxed mb-6">Generate gambar AI buatan mesin neural ultra modern dengan deskripsi prompt kreatif beresolusi sangat tinggi.</p>
+                </div>
+                <a href="ai-image.html" class="w-full py-3 rounded-xl bg-white/5 border border-white/10 font-future text-xs font-bold tracking-wider hover:bg-cyber-orange hover:text-white hover:border-cyber-orange hover:shadow-neon-orange transition-all duration-300 text-center flex items-center justify-center gap-2 relative overflow-hidden ripple-btn">
+                    OPEN TOOL <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+                </a>
+            </div>
+
+            <!-- GRID 4: Search HappyMod -->
+            <div class="glass-card rounded-2xl p-6 flex flex-col justify-between group hover:shadow-neon-blue hover:-translate-y-2 transition-all duration-300" data-aos="fade-up" data-aos-delay="400">
+                <div>
+                    <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-500 to-cyber-blue flex items-center justify-center shadow-lg mb-6 group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-robot text-white text-xl"></i>
+                    </div>
+                    <h3 class="font-future font-bold text-xl mb-2 text-white group-hover:text-cyber-blue transition-colors">Search HappyMod</h3>
+                    <p class="text-neutral-400 text-sm leading-relaxed mb-6">Cari modifikasi aplikasi, game Android, dan pembaruan berkas package HappyMod terbaru secara aman dan terstruktur.</p>
+                </div>
+                <a href="happymod.html" class="w-full py-3 rounded-xl bg-white/5 border border-white/10 font-future text-xs font-bold tracking-wider hover:bg-cyber-blue hover:text-white hover:border-cyber-blue hover:shadow-neon-blue transition-all duration-300 text-center flex items-center justify-center gap-2 relative overflow-hidden ripple-btn">
+                    OPEN TOOL <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+                </a>
+            </div>
+
+            <!-- GRID 5: NEO E-KTP Generated -->
+            <div class="glass-card rounded-2xl p-6 flex flex-col justify-between group hover:shadow-neon-orange hover:-translate-y-2 transition-all duration-300 md:col-span-2 lg:col-span-1" data-aos="fade-up" data-aos-delay="500">
+                <div>
+                    <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-cyber-orange to-red-600 flex items-center justify-center shadow-lg mb-6 group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-id-card text-white text-xl"></i>
+                    </div>
+                    <h3 class="font-future font-bold text-xl mb-2 text-white group-hover:text-cyber-orange transition-colors">NEO E-KTP Generated</h3>
+                    <p class="text-neutral-400 text-sm leading-relaxed mb-6">Generator otomatis pembuatan data mockup visual replika E-KTP fiktif bertema futuristik untuk kebutuhan aset desain.</p>
+                </div>
+                <a href="neo-ektp.html" class="w-full py-3 rounded-xl bg-white/5 border border-white/10 font-future text-xs font-bold tracking-wider hover:bg-cyber-orange hover:text-white hover:border-cyber-orange hover:shadow-neon-orange transition-all duration-300 text-center flex items-center justify-center gap-2 relative overflow-hidden ripple-btn">
+                    OPEN TOOL <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+                </a>
+            </div>
+
+        </div>
+    </main>
+
+
+    <!-- FOOTER -->
+    <footer class="bg-cyber-dark/80 backdrop-blur-md border-t border-white/5 relative z-10 py-12 px-6 md:px-12">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6 mb-8">
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-lg bg-cyber-orange flex items-center justify-center shadow-neon-orange">
+                    <i class="fa-solid fa-cubes text-white text-xs"></i>
+                </div>
+                <span class="font-future text-lg font-black tracking-wider text-white">Rez<span class="text-cyber-orange">Hub</span></span>
+            </div>
+            
+            <div class="flex gap-4">
+                <a href="#" class="w-9 h-9 rounded-lg bg-white/5 hover:bg-cyber-orange flex items-center justify-center text-neutral-400 hover:text-white text-sm transition-all transform hover:-translate-y-1"><i class="fa-brands fa-github"></i></a>
+                <a href="#" class="w-9 h-9 rounded-lg bg-white/5 hover:bg-cyber-orange flex items-center justify-center text-neutral-400 hover:text-white text-sm transition-all transform hover:-translate-y-1"><i class="fa-brands fa-instagram"></i></a>
+                <a href="#" class="w-9 h-9 rounded-lg bg-white/5 hover:bg-cyber-orange flex items-center justify-center text-neutral-400 hover:text-white text-sm transition-all transform hover:-translate-y-1"><i class="fa-brands fa-discord"></i></a>
+            </div>
+        </div>
+
+        <!-- Neon Glow Separator Line -->
+        <div class="max-w-7xl mx-auto h-[1px] bg-gradient-to-r from-transparent via-cyber-orange to-transparent opacity-60 mb-8 shadow-neon-orange"></div>
+
+        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-4 text-xs text-neutral-600 font-future tracking-wider text-center">
+            <p>© 2026 REZHUB MAINFRAME. CODES POWERED BY AI.</p>
+            <p>FUTURE ECOSYSTEM PLATFORM.</p>
+        </div>
+    </footer>
+
+
+    <!-- CORE ANIMATION ENGINE LIBRARY -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+
+    <script>
+        // 1. Initialize AOS Engine
+        AOS.init({
+            duration: 900,
+            once: true,
+            mirror: false
+        });
+
+        // 2. Loading Controller Logic
+        window.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                gsap.to('#loading-screen', {
+                    opacity: 0,
+                    duration: 0.6,
+                    onComplete: () => {
+                        document.getElementById('loading-screen').style.display = 'none';
+                        // Trigger Entrance Hero Anim
+                        let tl = gsap.timeline();
+                        tl.from("#hero-title", { opacity: 0, y: 40, duration: 0.8, ease: "power3.out" })
+                          .from("#hero-subtitle", { opacity: 0, y: 20, duration: 0.6, ease: "power2.out" }, "-=0.4");
+                    }
+                });
+            }, 600);
+        });
+
+        // 3. Custom Glowing Cursor Positioning
+        const cursor = document.getElementById('custom-cursor');
+        document.addEventListener('mousemove', (e) => {
+            cursor.style.left = e.clientX + 'px';
+            cursor.style.top = e.clientY + 'px';
+        });
+
+        document.querySelectorAll('button, a, .glass-card').forEach(item => {
+            item.addEventListener('mouseenter', () => {
+                cursor.style.width = '36px';
+                cursor.style.height = '36px';
+                cursor.style.backgroundColor = 'rgba(0, 229, 255, 0.1)';
+                cursor.style.borderColor = '#00E5FF';
+                cursor.style.boxShadow = '0 0 15px #00E5FF';
+            });
+            item.addEventListener('mouseleave', () => {
+                cursor.style.width = '24px';
+                cursor.style.height = '24px';
+                cursor.style.backgroundColor = 'rgba(255, 85, 0, 0.2)';
+                cursor.style.borderColor = '#FF5500';
+                cursor.style.boxShadow = '0 0 15px #FF5500';
+            });
+        });
+
+        // 4. Sidebar Drawer Slide Mechanism
+        const toggleBtn = document.getElementById('menu-toggle-btn');
+        const closeBtn = document.getElementById('menu-close-btn');
+        const overlay = document.getElementById('sidebar-overlay');
+        const menu = document.getElementById('sidebar-menu');
+
+        function openMenu() {
+            overlay.classList.remove('pointer-events-none', 'opacity-0');
+            menu.classList.remove('translate-x-full');
+        }
+
+        function closeMenu() {
+            overlay.classList.add('pointer-events-none', 'opacity-0');
+            menu.classList.add('translate-x-full');
+        }
+
+        toggleBtn.addEventListener('click', openMenu);
+        closeBtn.addEventListener('click', closeMenu);
+        overlay.addEventListener('click', closeMenu);
+
+        // 5. Scroll Performance Optimization Features
+        window.addEventListener('scroll', () => {
+            let scrollPos = window.scrollY;
+            let btnTop = document.getElementById('btn-back-to-top');
+
+            if (scrollPos > 300) {
+                btnTop.classList.remove('opacity-0', 'translate-y-10');
+                btnTop.classList.add('opacity-100', 'translate-y-0');
+            } else {
+                btnTop.classList.add('opacity-0', 'translate-y-10');
+                btnTop.classList.remove('opacity-100', 'translate-y-0');
+            }
+        });
+
+        document.getElementById('btn-back-to-top').addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        // 6. Ripple Click Engine Implementation
+        document.querySelectorAll('.ripple-btn').forEach(button => {
+            button.addEventListener('click', function(e) {
+                let rect = e.target.getBoundingClientRect();
+                let x = e.clientX - rect.left;
+                let y = e.clientY - rect.top;
+                let circle = document.createElement('span');
+                
+                circle.style.left = x + 'px';
+                circle.style.top = y + 'px';
+                circle.classList.add('absolute', 'w-2', 'h-2', 'bg-white/30', 'rounded-full', 'transform', '-translate-x-1/2', '-translate-y-1/2', 'animate-ping');
+                circle.style.animationDuration = '0.6s';
+                
+                this.appendChild(circle);
+                setTimeout(() => circle.remove(), 600);
+            });
+        });
     </script>
 </body>
 </html>
