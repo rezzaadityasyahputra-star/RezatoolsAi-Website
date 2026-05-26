@@ -1,427 +1,521 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth">
+<html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RezHub — Modern Multi Tools Platform</title>
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        cyber: {
-                            dark: '#050508',
-                            card: '#0d0d15',
-                            orange: '#FF5500',
-                            neonOrange: '#FF7700',
-                            blue: '#00E5FF',
-                            glowBlue: '#00B0FF'
-                        }
-                    },
-                    boxShadow: {
-                        'neon-orange': '0 0 20px rgba(255, 85, 0, 0.45), 0 0 40px rgba(255, 85, 0, 0.15)',
-                        'neon-blue': '0 0 20px rgba(0, 229, 255, 0.45), 0 0 40px rgba(0, 229, 255, 0.15)',
-                    }
-                }
-            }
-        }
-    </script>
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
-    <!-- FontAwesome Icons -->
+    <title>RezHub - Admin Control Panel</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- AOS CSS -->
-    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
-
+    
     <style>
+        /* --- CORE CONFIG VARIANT BRANDING --- */
+        :root {
+            --bg-dark: #06060c;
+            --bg-card: rgba(12, 12, 25, 0.7);
+            --neon-cyan: #00f0ff;
+            --neon-magenta: #ff007f;
+            --neon-red: #ff3333;
+            --border-glass: rgba(0, 240, 255, 0.15);
+            --text-primary: #f5f7fa;
+            --text-secondary: #90a0b5;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+        }
+
         body {
-            font-family: 'Inter', sans-serif;
-            background-color: #050508;
+            background: var(--bg-dark);
+            color: var(--text-primary);
             overflow-x: hidden;
+            min-height: 100vh;
         }
-        .font-future {
-            font-family: 'Orbitron', sans-serif;
-        }
-        /* Custom Custom Glow Cursor */
-        #custom-cursor {
-            width: 24px;
-            height: 24px;
-            background: rgba(255, 85, 0, 0.2);
-            border: 2px solid #FF5500;
-            box-shadow: 0 0 15px #FF5500;
-            border-radius: 50%;
+
+        /* Ambient Space Background Effects */
+        .ambient-glow {
             position: fixed;
-            transform: translate(-50%, -50%);
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(255, 0, 127, 0.08) 0%, rgba(0,0,0,0) 70%);
+            bottom: -10%;
+            right: -5%;
+            z-index: 1;
             pointer-events: none;
-            z-index: 9999;
-            transition: width 0.2s, height 0.2s, background-color 0.2s, border-color 0.2s;
         }
-        /* Glassmorphism Matrix Styling */
-        .glass-nav {
-            background: rgba(5, 5, 8, 0.75);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+
+        .glass {
+            background: var(--bg-card);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--border-glass);
+            border-radius: 16px;
         }
-        .glass-card {
-            background: rgba(13, 13, 21, 0.45);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.03);
-            transition: border 0.4s, transform 0.4s, box-shadow 0.4s;
+
+        /* Layout Structure Controls */
+        header {
+            width: 100%;
+            height: 75px;
+            border-bottom: 1px solid var(--border-glass);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 30px;
+            background: rgba(6, 6, 12, 0.8);
+            position: sticky;
+            top: 0;
+            z-index: 50;
         }
-        .glass-card:hover {
-            border-color: rgba(255, 85, 0, 0.4);
+        .logo-area {
+            font-size: 1.6rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-shadow: 0 0 12px var(--neon-cyan);
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
-        .glass-menu {
-            background: rgba(10, 10, 18, 0.85);
-            backdrop-filter: blur(25px);
-            -webkit-backdrop-filter: blur(25px);
-            border-left: 1px solid rgba(255, 85, 0, 0.2);
+        .logo-area span { color: var(--neon-magenta); }
+
+        .admin-container {
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            position: relative;
+            z-index: 10;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 35px;
         }
-        /* Gradient Background Motion Animation */
-        .bg-gradient-animate {
-            background-size: 200% 200%;
-            animation: gradientMove 12s ease infinite;
+
+        /* Statistics Cards Layout */
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
         }
-        @keyframes gradientMove {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
+        .stat-card {
+            padding: 25px 20px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            transition: transform 0.3s, box-shadow 0.3s;
         }
-        /* Hide default scrollbar track */
-        ::-webkit-scrollbar {
-            width: 6px;
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 5px 15px rgba(0, 240, 255, 0.1);
         }
-        ::-webkit-scrollbar-track {
-            background: #050508;
+        .stat-icon {
+            width: 55px;
+            height: 55px;
+            border-radius: 12px;
+            background: rgba(0, 240, 255, 0.1);
+            border: 1px solid rgba(0, 240, 255, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.6rem;
+            color: var(--neon-cyan);
+            box-shadow: 0 0 10px rgba(0, 240, 255, 0.2);
         }
-        ::-webkit-scrollbar-thumb {
-            background: #FF5500;
-            border-radius: 10px;
+        .stat-icon.magenta {
+            background: rgba(255, 0, 127, 0.1);
+            border-color: rgba(255, 0, 127, 0.3);
+            color: var(--neon-magenta);
+            box-shadow: 0 0 10px rgba(255, 0, 127, 0.2);
         }
+        .stat-meta h3 { font-size: 1.8rem; font-weight: 700; line-height: 1.2; }
+        .stat-meta p { font-size: 0.85rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; }
+
+        /* Multi-Window Management Layout Control */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
+        }
+
+        @media (max-width: 992px) {
+            .dashboard-grid { grid-template-columns: 1fr; }
+        }
+
+        /* Core Data Tables Modules Visual Customization */
+        .panel-box {
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .panel-box h2 {
+            font-size: 1.3rem;
+            letter-spacing: 0.5px;
+            border-left: 4px solid var(--neon-cyan);
+            padding-left: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 0.9rem;
+        }
+        th {
+            background: rgba(255,255,255,0.03);
+            padding: 15px 12px;
+            color: var(--neon-cyan);
+            font-weight: 600;
+            border-bottom: 2px solid var(--border-glass);
+        }
+        td {
+            padding: 15px 12px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            color: var(--text-primary);
+        }
+        tr:hover td {
+            background: rgba(0, 240, 255, 0.02);
+        }
+
+        /* Dynamic Status Badges Components */
+        .badge {
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .badge.online { background: rgba(0,255,127,0.1); color: #00ff7f; }
+        .badge.offline { background: rgba(255,255,255,0.05); color: var(--text-secondary); }
+
+        /* Form Controls Elements */
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+        .form-group label { font-size: 0.85rem; color: var(--text-secondary); font-weight: 500; }
+        
+        select, textarea {
+            width: 100%;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 8px;
+            padding: 12px;
+            color: #fff;
+            outline: none;
+            transition: all 0.3s;
+        }
+        select:focus, textarea:focus {
+            border-color: var(--neon-cyan);
+            box-shadow: 0 0 10px rgba(0, 240, 255, 0.2);
+            background: rgba(255,255,255,0.07);
+        }
+        select option { background: #0c0c19; color: #fff; }
+
+        /* Button Action Controllers */
+        .btn-core {
+            position: relative;
+            overflow: hidden;
+            background: transparent;
+            border: 1px solid var(--neon-cyan);
+            color: var(--neon-cyan);
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 8px rgba(0,240,255,0.15);
+        }
+        .btn-core:hover {
+            background: var(--neon-cyan);
+            color: #000;
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.5);
+            transform: translateY(-2px);
+        }
+        .btn-action-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border: 1px solid var(--neon-red);
+            color: var(--neon-red);
+            background: transparent;
+            transition: all 0.3s;
+        }
+        .btn-action-icon:hover {
+            background: var(--neon-red);
+            color: #fff;
+            box-shadow: 0 0 12px rgba(255,51,51,0.5);
+            transform: scale(1.05);
+        }
+
+        /* Ripple Component Effect */
+        .ripple-effect {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.35);
+            border-radius: 50%;
+            transform: scale(0);
+            animation: ripple-run 0.5s linear;
+            pointer-events: none;
+        }
+        @keyframes ripple-run { to { transform: scale(4); opacity: 0; } }
+
+        /* Global Dynamic Toast Alert Frames */
+        .toast-box {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            padding: 15px 25px;
+            z-index: 100;
+            border-left: 4px solid var(--neon-cyan);
+            transform: translateX(150%);
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 0.9rem;
+        }
+        .toast-box.trigger { transform: translateX(0); }
     </style>
 </head>
-<body class="text-white antialiased selection:bg-cyber-orange selection:text-white">
+<body>
 
-    <!-- Custom Glow Cursor -->
-    <div id="custom-cursor" class="hidden md:block"></div>
+    <div class="ambient-glow"></div>
 
-    <!-- Loading Screen Modern -->
-    <div id="loading-screen" class="fixed inset-0 bg-cyber-dark z-[10000] flex flex-col justify-center items-center">
-        <div class="relative flex flex-col items-center">
-            <div class="w-16 h-16 border-4 border-cyber-orange border-t-cyber-blue rounded-full animate-spin shadow-neon-orange mb-6"></div>
-            <h2 class="font-future text-3xl font-black tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-white via-cyber-orange to-cyber-blue">
-                REZHB
-            </h2>
-            <p class="text-neutral-500 font-medium text-xs tracking-widest mt-2">INITIALIZING PLATFORM...</p>
-        </div>
-    </div>
+    <header>
+        <div class="logo-area"><i class="fa-solid fa-user-shield"></i> REZHUB <span>PANEL</span></div>
+        <div class="badge online" style="padding: 6px 12px;"><i class="fa-solid fa-tower-cell"></i> Server Live</div>
+    </header>
 
-    <!-- Floating Action: Back To Top -->
-    <button id="btn-back-to-top" class="fixed bottom-6 right-6 z-50 p-4 rounded-xl bg-cyber-orange/10 border border-cyber-orange/30 text-cyber-orange opacity-0 translate-y-10 transition-all duration-500 shadow-neon-orange hover:bg-cyber-orange hover:text-white group">
-        <i class="fa-solid fa-chevron-up text-lg group-hover:-translate-y-1 transition-transform"></i>
-    </button>
-
-    <!-- FLOATING PARTICLES BACKGROUND -->
-    <div class="fixed inset-0 pointer-events-none z-0 opacity-20 bg-[radial-gradient(#ff5500_1px,transparent_1px)] [background-size:40px_40px]"></div>
-    <div class="fixed top-1/4 left-1/4 w-96 h-96 bg-cyber-orange/10 rounded-full blur-[150px] pointer-events-none z-0"></div>
-    <div class="fixed bottom-1/3 right-1/4 w-96 h-96 bg-cyber-blue/10 rounded-full blur-[150px] pointer-events-none z-0"></div>
-
-    <!-- HEADER / NAVBAR -->
-    <nav class="fixed top-0 w-full z-50 glass-nav py-4 px-6 md:px-12 flex justify-between items-center transition-all duration-300">
-        <div class="flex items-center gap-3 group cursor-pointer">
-            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-cyber-orange to-cyber-blue flex items-center justify-center shadow-neon-orange group-hover:rotate-12 transition-transform duration-300">
-                <i class="fa-solid fa-cubes text-white text-lg"></i>
-            </div>
-            <span class="font-future text-2xl font-black tracking-wider text-white">
-                Rez<span class="text-cyber-orange">Hub</span>
-            </span>
-        </div>
+    <div class="admin-container">
         
-        <!-- Toggle Menu Titik Tiga -->
-        <button id="menu-toggle-btn" class="w-11 h-11 rounded-xl glass-card flex items-center justify-center text-xl text-neutral-400 hover:text-cyber-orange hover:border-cyber-orange/40 transition-colors focus:outline-none relative overflow-hidden ripple-btn">
-            <i class="fa-solid fa-ellipsis-vertical"></i>
-        </button>
-    </nav>
-
-    <!-- POPUP / SIDEBAR DIAGONAL MENU -->
-    <div id="sidebar-overlay" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-md opacity-0 pointer-events-none transition-opacity duration-500"></div>
-    <div id="sidebar-menu" class="fixed top-0 right-0 h-full w-[320px] sm:w-[380px] z-[51] glass-menu translate-x-full transition-transform duration-500 p-8 flex flex-col justify-between">
-        <div>
-            <div class="flex justify-between items-center pb-6 border-b border-white/5 mb-8">
-                <h3 class="font-future font-bold tracking-wider text-sm text-neutral-400">// CONTROL DASHBOARD</h3>
-                <button id="menu-close-btn" class="text-neutral-400 hover:text-cyber-orange text-2xl">&times;</button>
+        <div class="stats-row">
+            <div class="stat-card glass">
+                <div class="stat-icon"><i class="fa-solid fa-users"></i></div>
+                <div class="stat-meta">
+                    <h3 id="stat-total-users">0</h3>
+                    <p>Total Pengguna</p>
+                </div>
             </div>
-
-            <!-- ISI MENU TITIK TIGA -->
-            <div class="space-y-4">
-                <a href="https://wa.me/6283116920767" target="_blank" class="w-full flex items-center gap-4 p-4 rounded-xl glass-card group hover:shadow-neon-orange relative overflow-hidden ripple-btn block">
-                    <div class="w-10 h-10 rounded-lg bg-emerald-500/10 text-emerald-400 flex items-center justify-center text-lg group-hover:bg-emerald-500 group-hover:text-white transition-all">
-                        <i class="fa-brands fa-whatsapp"></i>
-                    </div>
-                    <span class="font-medium text-sm text-neutral-300 group-hover:text-white transition-colors">Hubungi WhatsApp</span>
-                    <i class="fa-solid fa-chevron-right text-xs text-neutral-600 ml-auto group-hover:text-cyber-orange transition-colors"></i>
-                </a>
-
-                <a href="policy.html" class="w-full flex items-center gap-4 p-4 rounded-xl glass-card group hover:shadow-neon-blue relative overflow-hidden ripple-btn block">
-                    <div class="w-10 h-10 rounded-lg bg-cyber-blue/10 text-cyber-blue flex items-center justify-center text-lg group-hover:bg-cyber-blue group-hover:text-white transition-all">
-                        <i class="fa-solid fa-gavel"></i>
-                    </div>
-                    <span class="font-medium text-sm text-neutral-300 group-hover:text-white transition-colors">Kebijakan Website</span>
-                    <i class="fa-solid fa-chevron-right text-xs text-neutral-600 ml-auto group-hover:text-cyber-blue transition-colors"></i>
-                </a>
-
-                <a href="privacy.html" class="w-full flex items-center gap-4 p-4 rounded-xl glass-card group hover:shadow-neon-blue relative overflow-hidden ripple-btn block">
-                    <div class="w-10 h-10 rounded-lg bg-indigo-500/10 text-indigo-400 flex items-center justify-center text-lg group-hover:bg-indigo-500 group-hover:text-white transition-all">
-                        <i class="fa-solid fa-shield-halved"></i>
-                    </div>
-                    <span class="font-medium text-sm text-neutral-300 group-hover:text-white transition-colors">Kebijakan Privasi</span>
-                    <i class="fa-solid fa-chevron-right text-xs text-neutral-600 ml-auto group-hover:text-cyber-blue transition-colors"></i>
-                </a>
+            <div class="stat-card glass">
+                <div class="stat-icon" style="color: #00ff7f; background:rgba(0,255,127,0.1); border-color: rgba(0,255,127,0.3); box-shadow: 0 0 10px rgba(0,255,127,0.2);">
+                    <i class="fa-solid fa-signal"></i>
+                </div>
+                <div class="stat-meta">
+                    <h3 id="stat-active-users">0</h3>
+                    <p>User Aktif</p>
+                </div>
+            </div>
+            <div class="stat-card glass">
+                <div class="stat-icon magenta"><i class="fa-solid fa-chart-simple"></i></div>
+                <div class="stat-meta">
+                    <h3 id="stat-total-traffic">0</h3>
+                    <p>Total Hit Kunjungan</p>
+                </div>
             </div>
         </div>
 
-        <div class="border-t border-white/5 pt-6 text-center text-xs text-neutral-600 font-future tracking-wider">
-            REZHUB SYSTEM v1.0.2
+        <div class="dashboard-grid">
+            
+            <div class="panel-box glass">
+                <h2>Daftar Akun Pengguna <i class="fa-solid fa-folder-open" style="color:var(--neon-cyan)"></i></h2>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Nama Lengkap</th>
+                                <th>Username</th>
+                                <th>Jam Login</th>
+                                <th>Status</th>
+                                <th>Kunjungan</th>
+                                <th style="text-align:center;">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="user-table-body">
+                            </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="panel-box glass">
+                <h2>Kirim Pesan Ke User <i class="fa-solid fa-paper-plane" style="color:var(--neon-magenta)"></i></h2>
+                <form id="msg-dispatch-form" onsubmit="dispatchMessage(event)">
+                    <div class="form-group">
+                        <label for="target-selection">Pilih Target User</label>
+                        <select id="target-selection" required>
+                            <option value="" disabled selected>-- Pilih Pengguna --</option>
+                            </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="msg-payload">Isi Pesan Custom</label>
+                        <textarea id="msg-payload" rows="5" placeholder="Ketik pesan di sini..." required></textarea>
+                    </div>
+                    <button type="submit" class="btn-core" style="width: 100%; margin-top: 5px;">
+                        <i class="fa-solid fa-share-nodes"></i> Kirim Pesan Realtime
+                    </button>
+                </form>
+            </div>
+
         </div>
     </div>
 
-
-    <!-- HERO SECTION -->
-    <section class="relative min-h-[60vh] md:min-h-[70vh] flex items-center justify-center pt-32 pb-16 px-6 z-10 overflow-hidden">
-        <div class="text-center max-w-4xl mx-auto relative z-10 flex flex-col items-center">
-            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full glass-card border border-cyber-orange/20 mb-6 bg-gradient-animate bg-gradient-to-r from-cyber-orange/10 via-cyber-blue/5 to-cyber-orange/10">
-                <span class="w-2 h-2 rounded-full bg-cyber-orange shadow-neon-orange animate-pulse"></span>
-                <span class="text-xs font-future tracking-widest font-bold text-neutral-300">NEXT-GEN WORKSPACE</span>
-            </div>
-
-            <h1 id="hero-title" class="font-future text-5xl md:text-8xl font-black tracking-tighter leading-none mb-6">
-                RezHub <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyber-orange via-amber-500 to-cyber-blue drop-shadow-[0_0_30px_rgba(255,85,0,0.2)]">All Tools</span>
-            </h1>
-            
-            <p id="hero-subtitle" class="text-neutral-400 max-w-xl text-base md:text-lg mb-8 tracking-wide font-light">
-                Modern Multi Tools Platform. Akses instan ke seluruh ekosistem peralatan digital masa depan berkecepatan tinggi dalam satu ruang kendali terpusat.
-            </p>
-        </div>
-    </section>
-
-
-    <!-- MAIN CONTENT: 5 TOOLS GRID -->
-    <main class="max-w-7xl mx-auto px-6 md:px-12 pb-32 z-10 relative">
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            
-            <!-- GRID 1: Brat Generator -->
-            <div class="glass-card rounded-2xl p-6 flex flex-col justify-between group hover:shadow-neon-orange hover:-translate-y-2 transition-all duration-300" data-aos="fade-up" data-aos-delay="100">
-                <div>
-                    <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-cyber-orange to-amber-500 flex items-center justify-center shadow-lg mb-6 group-hover:scale-110 transition-transform">
-                        <i class="fa-solid fa-font text-white text-xl"></i>
-                    </div>
-                    <h3 class="font-future font-bold text-xl mb-2 text-white group-hover:text-cyber-orange transition-colors">Brat Generator</h3>
-                    <p class="text-neutral-400 text-sm leading-relaxed mb-6">Generator tulisan brat aesthetic modern dengan kustomisasi font unik bergaya trend kontemporer secara instan.</p>
-                </div>
-                <a href="brat.html" class="w-full py-3 rounded-xl bg-white/5 border border-white/10 font-future text-xs font-bold tracking-wider hover:bg-cyber-orange hover:text-white hover:border-cyber-orange hover:shadow-neon-orange transition-all duration-300 text-center flex items-center justify-center gap-2 relative overflow-hidden ripple-btn">
-                    OPEN TOOL <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
-                </a>
-            </div>
-
-            <!-- GRID 2: Search Pinterest -->
-            <div class="glass-card rounded-2xl p-6 flex flex-col justify-between group hover:shadow-neon-blue hover:-translate-y-2 transition-all duration-300" data-aos="fade-up" data-aos-delay="200">
-                <div>
-                    <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-cyber-blue to-indigo-600 flex items-center justify-center shadow-lg mb-6 group-hover:scale-110 transition-transform">
-                        <i class="fa-brands fa-pinterest-p text-white text-xl"></i>
-                    </div>
-                    <h3 class="font-future font-bold text-xl mb-2 text-white group-hover:text-cyber-blue transition-colors">Search Pinterest</h3>
-                    <p class="text-neutral-400 text-sm leading-relaxed mb-6">Cari gambar Pinterest dengan kata kunci aesthetic secara real-time melalui integrasi API premium super cepat.</p>
-                </div>
-                <a href="pinterest.html" class="w-full py-3 rounded-xl bg-white/5 border border-white/10 font-future text-xs font-bold tracking-wider hover:bg-cyber-blue hover:text-white hover:border-cyber-blue hover:shadow-neon-blue transition-all duration-300 text-center flex items-center justify-center gap-2 relative overflow-hidden ripple-btn">
-                    OPEN TOOL <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
-                </a>
-            </div>
-
-            <!-- GRID 3: AI Image Generated -->
-            <div class="glass-card rounded-2xl p-6 flex flex-col justify-between group hover:shadow-neon-orange hover:-translate-y-2 transition-all duration-300" data-aos="fade-up" data-aos-delay="300">
-                <div>
-                    <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-cyber-orange to-fuchsia-600 flex items-center justify-center shadow-lg mb-6 group-hover:scale-110 transition-transform">
-                        <i class="fa-solid fa-wand-magic-sparkles text-white text-xl"></i>
-                    </div>
-                    <h3 class="font-future font-bold text-xl mb-2 text-white group-hover:text-cyber-orange transition-colors">AI Image Generated</h3>
-                    <p class="text-neutral-400 text-sm leading-relaxed mb-6">Generate gambar AI buatan mesin neural ultra modern dengan deskripsi prompt kreatif beresolusi sangat tinggi.</p>
-                </div>
-                <a href="ai-image.html" class="w-full py-3 rounded-xl bg-white/5 border border-white/10 font-future text-xs font-bold tracking-wider hover:bg-cyber-orange hover:text-white hover:border-cyber-orange hover:shadow-neon-orange transition-all duration-300 text-center flex items-center justify-center gap-2 relative overflow-hidden ripple-btn">
-                    OPEN TOOL <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
-                </a>
-            </div>
-
-            <!-- GRID 4: Search HappyMod -->
-            <div class="glass-card rounded-2xl p-6 flex flex-col justify-between group hover:shadow-neon-blue hover:-translate-y-2 transition-all duration-300" data-aos="fade-up" data-aos-delay="400">
-                <div>
-                    <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-500 to-cyber-blue flex items-center justify-center shadow-lg mb-6 group-hover:scale-110 transition-transform">
-                        <i class="fa-solid fa-robot text-white text-xl"></i>
-                    </div>
-                    <h3 class="font-future font-bold text-xl mb-2 text-white group-hover:text-cyber-blue transition-colors">Search HappyMod</h3>
-                    <p class="text-neutral-400 text-sm leading-relaxed mb-6">Cari modifikasi aplikasi, game Android, dan pembaruan berkas package HappyMod terbaru secara aman dan terstruktur.</p>
-                </div>
-                <a href="happymod.html" class="w-full py-3 rounded-xl bg-white/5 border border-white/10 font-future text-xs font-bold tracking-wider hover:bg-cyber-blue hover:text-white hover:border-cyber-blue hover:shadow-neon-blue transition-all duration-300 text-center flex items-center justify-center gap-2 relative overflow-hidden ripple-btn">
-                    OPEN TOOL <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
-                </a>
-            </div>
-
-            <!-- GRID 5: NEO E-KTP Generated -->
-            <div class="glass-card rounded-2xl p-6 flex flex-col justify-between group hover:shadow-neon-orange hover:-translate-y-2 transition-all duration-300 md:col-span-2 lg:col-span-1" data-aos="fade-up" data-aos-delay="500">
-                <div>
-                    <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-cyber-orange to-red-600 flex items-center justify-center shadow-lg mb-6 group-hover:scale-110 transition-transform">
-                        <i class="fa-solid fa-id-card text-white text-xl"></i>
-                    </div>
-                    <h3 class="font-future font-bold text-xl mb-2 text-white group-hover:text-cyber-orange transition-colors">NEO E-KTP Generated</h3>
-                    <p class="text-neutral-400 text-sm leading-relaxed mb-6">Generator otomatis pembuatan data mockup visual replika E-KTP fiktif bertema futuristik untuk kebutuhan aset desain.</p>
-                </div>
-                <a href="neo-ektp.html" class="w-full py-3 rounded-xl bg-white/5 border border-white/10 font-future text-xs font-bold tracking-wider hover:bg-cyber-orange hover:text-white hover:border-cyber-orange hover:shadow-neon-orange transition-all duration-300 text-center flex items-center justify-center gap-2 relative overflow-hidden ripple-btn">
-                    OPEN TOOL <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
-                </a>
-            </div>
-
-        </div>
-    </main>
-
-
-    <!-- FOOTER -->
-    <footer class="bg-cyber-dark/80 backdrop-blur-md border-t border-white/5 relative z-10 py-12 px-6 md:px-12">
-        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6 mb-8">
-            <div class="flex items-center gap-3">
-                <div class="w-8 h-8 rounded-lg bg-cyber-orange flex items-center justify-center shadow-neon-orange">
-                    <i class="fa-solid fa-cubes text-white text-xs"></i>
-                </div>
-                <span class="font-future text-lg font-black tracking-wider text-white">Rez<span class="text-cyber-orange">Hub</span></span>
-            </div>
-            
-            <div class="flex gap-4">
-                <a href="#" class="w-9 h-9 rounded-lg bg-white/5 hover:bg-cyber-orange flex items-center justify-center text-neutral-400 hover:text-white text-sm transition-all transform hover:-translate-y-1"><i class="fa-brands fa-github"></i></a>
-                <a href="#" class="w-9 h-9 rounded-lg bg-white/5 hover:bg-cyber-orange flex items-center justify-center text-neutral-400 hover:text-white text-sm transition-all transform hover:-translate-y-1"><i class="fa-brands fa-instagram"></i></a>
-                <a href="#" class="w-9 h-9 rounded-lg bg-white/5 hover:bg-cyber-orange flex items-center justify-center text-neutral-400 hover:text-white text-sm transition-all transform hover:-translate-y-1"><i class="fa-brands fa-discord"></i></a>
-            </div>
-        </div>
-
-        <!-- Neon Glow Separator Line -->
-        <div class="max-w-7xl mx-auto h-[1px] bg-gradient-to-r from-transparent via-cyber-orange to-transparent opacity-60 mb-8 shadow-neon-orange"></div>
-
-        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-4 text-xs text-neutral-600 font-future tracking-wider text-center">
-            <p>© 2026 REZHUB MAINFRAME. CODES POWERED BY AI.</p>
-            <p>FUTURE ECOSYSTEM PLATFORM.</p>
-        </div>
-    </footer>
-
-
-    <!-- CORE ANIMATION ENGINE LIBRARY -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <div class="toast-box glass" id="admin-toast">
+        <i class="fa-solid fa-circle-check" style="color: var(--neon-cyan); font-size:1.2rem;"></i>
+        <span id="toast-txt-content">Aksi berhasil diproses!</span>
+    </div>
 
     <script>
-        // 1. Initialize AOS Engine
-        AOS.init({
-            duration: 900,
-            once: true,
-            mirror: false
-        });
+        let usersDB = JSON.parse(localStorage.getItem('usersDB')) || [];
 
-        // 2. Loading Controller Logic
+        // Main Initialize Engine Routine
         window.addEventListener('DOMContentLoaded', () => {
-            setTimeout(() => {
-                gsap.to('#loading-screen', {
-                    opacity: 0,
-                    duration: 0.6,
-                    onComplete: () => {
-                        document.getElementById('loading-screen').style.display = 'none';
-                        // Trigger Entrance Hero Anim
-                        let tl = gsap.timeline();
-                        tl.from("#hero-title", { opacity: 0, y: 40, duration: 0.8, ease: "power3.out" })
-                          .from("#hero-subtitle", { opacity: 0, y: 20, duration: 0.6, ease: "power2.out" }, "-=0.4");
-                    }
+            renderControlMetrics();
+            attachRippleFxs();
+
+            // Inter-tab cross database synchronization engine listeners 
+            window.addEventListener('storage', (e) => {
+                if (e.key === 'usersDB') {
+                    usersDB = JSON.parse(e.newValue) || [];
+                    renderControlMetrics();
+                }
+            });
+        });
+
+        // Event Ripple Generator Logic Attached
+        function attachRippleFxs() {
+            document.querySelectorAll('.btn-core').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    let rip = document.createElement('span');
+                    rip.className = 'ripple-effect';
+                    this.appendChild(rip);
+                    let x = e.clientX - e.target.getBoundingClientRect().left;
+                    let y = e.clientY - e.target.getBoundingClientRect().top;
+                    rip.style.left = `${x}px`;
+                    rip.style.top = `${y}px`;
+                    setTimeout(() => { rip.remove(); }, 500);
                 });
-            }, 600);
-        });
-
-        // 3. Custom Glowing Cursor Positioning
-        const cursor = document.getElementById('custom-cursor');
-        document.addEventListener('mousemove', (e) => {
-            cursor.style.left = e.clientX + 'px';
-            cursor.style.top = e.clientY + 'px';
-        });
-
-        document.querySelectorAll('button, a, .glass-card').forEach(item => {
-            item.addEventListener('mouseenter', () => {
-                cursor.style.width = '36px';
-                cursor.style.height = '36px';
-                cursor.style.backgroundColor = 'rgba(0, 229, 255, 0.1)';
-                cursor.style.borderColor = '#00E5FF';
-                cursor.style.boxShadow = '0 0 15px #00E5FF';
             });
-            item.addEventListener('mouseleave', () => {
-                cursor.style.width = '24px';
-                cursor.style.height = '24px';
-                cursor.style.backgroundColor = 'rgba(255, 85, 0, 0.2)';
-                cursor.style.borderColor = '#FF5500';
-                cursor.style.boxShadow = '0 0 15px #FF5500';
-            });
-        });
-
-        // 4. Sidebar Drawer Slide Mechanism
-        const toggleBtn = document.getElementById('menu-toggle-btn');
-        const closeBtn = document.getElementById('menu-close-btn');
-        const overlay = document.getElementById('sidebar-overlay');
-        const menu = document.getElementById('sidebar-menu');
-
-        function openMenu() {
-            overlay.classList.remove('pointer-events-none', 'opacity-0');
-            menu.classList.remove('translate-x-full');
         }
 
-        function closeMenu() {
-            overlay.classList.add('pointer-events-none', 'opacity-0');
-            menu.classList.add('translate-x-full');
+        // Custom Notification Automation Alerts Components
+        function triggerToast(text) {
+            const el = document.getElementById('admin-toast');
+            document.getElementById('toast-txt-content').innerText = text;
+            el.classList.add('trigger');
+            setTimeout(() => { el.classList.remove('trigger'); }, 3000);
         }
 
-        toggleBtn.addEventListener('click', openMenu);
-        closeBtn.addEventListener('click', closeMenu);
-        overlay.addEventListener('click', closeMenu);
+        // Core UI Metrics Calculation Component
+        function renderControlMetrics() {
+            usersDB = JSON.parse(localStorage.getItem('usersDB')) || [];
+            
+            // Extract Statistical Elements Data Information
+            const totalUsers = usersDB.length;
+            const activeUsers = usersDB.filter(u => u.isOnline).length;
+            const totalTraffic = usersDB.reduce((sum, u) => sum + (u.visits || 0), 0);
 
-        // 5. Scroll Performance Optimization Features
-        window.addEventListener('scroll', () => {
-            let scrollPos = window.scrollY;
-            let btnTop = document.getElementById('btn-back-to-top');
+            document.getElementById('stat-total-users').innerText = totalUsers;
+            document.getElementById('stat-active-users').innerText = activeUsers;
+            document.getElementById('stat-total-traffic').innerText = totalTraffic;
 
-            if (scrollPos > 300) {
-                btnTop.classList.remove('opacity-0', 'translate-y-10');
-                btnTop.classList.add('opacity-100', 'translate-y-0');
-            } else {
-                btnTop.classList.add('opacity-0', 'translate-y-10');
-                btnTop.classList.remove('opacity-100', 'translate-y-0');
+            // Render Dynamic User Listing Logs Data Monitoring
+            const tbody = document.getElementById('user-table-body');
+            tbody.innerHTML = '';
+
+            const selectEl = document.getElementById('target-selection');
+            // Cache current selected options targeting parameters
+            const currentSelected = selectEl.value;
+            selectEl.innerHTML = '<option value="" disabled selected>-- Pilih Pengguna --</option>';
+
+            if (usersDB.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:var(--text-secondary);">Tidak ada data akun pengguna terdaftar.</td></tr>`;
+                return;
             }
-        });
 
-        document.getElementById('btn-back-to-top').addEventListener('click', () => {
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        });
+            usersDB.forEach(user => {
+                // Populate Table View Row Data Elements
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><strong>${user.fullName}</strong></td>
+                    <td>@${user.username}</td>
+                    <td><i class="fa-regular fa-clock" style="color:var(--neon-cyan); margin-right:5px;"></i> ${user.loginTime || '-'}</td>
+                    <td>
+                        <span class="badge ${user.isOnline ? 'online' : 'offline'}">
+                            <i class="fa-solid fa-circle" style="font-size:0.5rem"></i> ${user.isOnline ? 'Online' : 'Offline'}
+                        </span>
+                    </td>
+                    <td><i class="fa-solid fa-chart-line" style="color:var(--text-secondary)"></i> ${user.visits || 0} x</td>
+                    <td style="text-align:center;">
+                        <button class="btn-action-icon" onclick="deleteUserAccount('${user.username}')" title="Hapus Akun">
+                            <i class="fa-solid fa-trash-can"></i>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(row);
 
-        // 6. Ripple Click Engine Implementation
-        document.querySelectorAll('.ripple-btn').forEach(button => {
-            button.addEventListener('click', function(e) {
-                let rect = e.target.getBoundingClientRect();
-                let x = e.clientX - rect.left;
-                let y = e.clientY - rect.top;
-                let circle = document.createElement('span');
-                
-                circle.style.left = x + 'px';
-                circle.style.top = y + 'px';
-                circle.classList.add('absolute', 'w-2', 'h-2', 'bg-white/30', 'rounded-full', 'transform', '-translate-x-1/2', '-translate-y-1/2', 'animate-ping');
-                circle.style.animationDuration = '0.6s';
-                
-                this.appendChild(circle);
-                setTimeout(() => circle.remove(), 600);
+                // Populate Communications Selection Options Array List
+                const option = document.createElement('option');
+                option.value = user.username;
+                option.innerText = `${user.fullName} (@${user.username})`;
+                selectEl.appendChild(option);
             });
-        });
+
+            // Re-apply select choices memory positions indicators
+            if (currentSelected && usersDB.some(u => u.username === currentSelected)) {
+                selectEl.value = currentSelected;
+            }
+        }
+
+        // Live Operational Database Mutations Module - Delete Accounts
+        function deleteUserAccount(username) {
+            if (confirm(`Apakah Anda yakin ingin menghapus akun @${username} secara permanen?`)) {
+                usersDB = JSON.parse(localStorage.getItem('usersDB')) || [];
+                usersDB = usersDB.filter(u => u.username !== username);
+                localStorage.setItem('usersDB', JSON.stringify(usersDB));
+                
+                triggerToast(`Akun @${username} berhasil dihapus dari sistem!`);
+                renderControlMetrics();
+            }
+        }
+
+        // Live Synchronous Data Messages Broadcasting Module Dispatcher Engine
+        function dispatchMessage(e) {
+            e.preventDefault();
+            const targetUser = document.getElementById('target-selection').value;
+            const message = document.getElementById('msg-payload').value.trim();
+
+            if (!targetUser) return alert("Pilih target user terlebih dahulu!");
+
+            const payloadSync = {
+                targetUser: targetUser,
+                message: message,
+                timestamp: Date.now(),
+                timeStr: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })
+            };
+
+            // Flash transmit execution sequence over localStorage pipe network
+            localStorage.setItem('adminMessageSync', JSON.stringify(payloadSync));
+            
+            triggerToast(`Pesan berhasil dikirim secara realtime ke @${targetUser}!`);
+            document.getElementById('msg-payload').value = '';
+        }
     </script>
 </body>
 </html>
